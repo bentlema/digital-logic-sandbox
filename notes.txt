@@ -1,0 +1,125 @@
+
+Brainstorming on how I want the GUI to work...
+
+I want to be able to define the primative gates via the GUI, so theoretically
+the code itself would not implement the various logic gates (AND, OR, NOT, etc.)
+but rather, the user of the software would define those using the app itself.
+
+Each gate would be defined by specifying the number of inputs.
+The number of outputs is not specified, as there will always only ever be a
+single output.
+
+Gates with both inputs and outputs would be relatively easy to implement, but
+we need to make sure we have a way to also define components that do not have
+an input--only an output--such as a clock source, fixed HI or fixed LO signal,
+or a toggle switch.  The fixed HI/LO component would just be a special case
+of a toggle switch, and the clock source could be a toggle switch that automatically
+toggles itself every second (or other time length).
+
+Define Simple Gate / Component:
+
+         /    0 Inputs / 1 Output   (Used for a switch, clock source, fixed high, fixed low)
+ Choose <     1 Input  / 1 Output   (Used for a NOT gate / Inverter)
+         \    2 Inputs / 1 Output   (Used for AND, OR, XOR, NAND, NOR, XNOR)
+
+Potential Object Attributes...
+
+   - Type:
+      * Input Component (Switch, Clock, Fixed HI/LO)
+      * Output Component (LED, 7-Segment display)
+      * Gate (AND, OR, XOR, NAND, NOR, XNOR, NOT)
+      * Integrated Circuit (wrapper around a circuit which attaches inputs and outputs?)
+
+   - Inputs dict
+      * Input label
+
+   - Outputs dict
+      * Output label
+
+   - Relationship between inputs and outputs
+      * Strings such as 'AND' would map to the python 'and' operator, etc.
+      * Implement as truth table?
+      * Optimize with K-Map?
+
+
+Python only implements:  AND, OR, NOT, but we can use the bitwise XOR since we are working with Boolean types
+
+AND
+
+ P   Q  Out
+--- --- ---
+ 0   0   0
+ 0   1   0
+ 1   0   0
+ 1   1   1
+
+OR
+
+ P   Q  Out
+--- --- ---
+ 0   0   0
+ 0   1   1
+ 1   0   1
+ 1   1   1
+
+XOR (The carrot ^ operator in Python)
+
+ P   Q  Out
+--- --- ---
+ 0   0   0
+ 0   1   1
+ 1   0   1
+ 1   1   0
+
+NOT
+
+ P   Out
+--- ---
+ 0   1
+ 1   0
+
+
+
+foo = andGate()
+foo.printState()
+foo.toggleInputStateByName('IN_0')
+foo.printState()
+foo.toggleInputStateByName('IN_1')
+foo.printState()
+foo.toggleInputStateByName('IN_0')
+foo.printState()
+foo.toggleInputStateByName('IN_1')
+foo.printState()
+
+bar = orGate()
+bar.printState()
+bar.toggleInputStateByName('IN_0')
+bar.printState()
+bar.toggleInputStateByName('IN_1')
+bar.printState()
+bar.toggleInputStateByName('IN_0')
+bar.printState()
+bar.toggleInputStateByName('IN_1')
+bar.printState()
+
+
+lah = xorGate()
+lah.printState()
+lah.toggleInputStateByName('IN_0')
+lah.printState()
+lah.toggleInputStateByName('IN_1')
+lah.printState()
+lah.toggleInputStateByName('IN_0')
+lah.printState()
+lah.toggleInputStateByName('IN_1')
+lah.printState()
+
+
+dee = notGate()
+dee.printState()
+dee.toggleInputStateByName('IN_0')
+dee.printState()
+dee.toggleInputStateByName('IN_0')
+dee.printState()
+
+
