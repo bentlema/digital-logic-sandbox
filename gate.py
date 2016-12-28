@@ -15,7 +15,16 @@ class outputConnection():
         self.label = label
 
 
+
 class simpleGate():
+
+    def printState(self):
+
+        for i in self.inputConnection.keys():
+            print("{} = {}".format(self.inputConnection[i].label,self.inputConnection[i].state))
+
+        for o in self.outputConnection.keys():
+            print("{} = {}".format(self.outputConnection[o].label,self.outputConnection[o].state))
 
     def toggleInputState(self,conn):
         self.conn.state = not self.conn.state
@@ -32,6 +41,7 @@ class simpleGate():
     def setInputStateByName(self,connName,state):
         self.inputConnection[connName].state = state
         self.updateState()
+
 
 
 class notGate(simpleGate):
@@ -52,16 +62,6 @@ class notGate(simpleGate):
     def updateState(self):
         self.outputConnection['OUT_0'].state = not self.inputConnection['IN_0'].state
 
-    #
-    # Need to re-write this in a general/generic way, without any knowledge of the input/output names
-    # so that we can "promote" this method up to to the simpleGate class
-    #
-    def printState(self):
-        print()
-        print("    IN_0    OUT_0")
-        print("    -----   -----")
-        print("NOT {!r:<5} = {!r:<5}".format(self.inputConnection['IN_0'].state,self.outputConnection['OUT_0'].state))
-        print()
 
 
 class andGate(simpleGate):
@@ -83,16 +83,6 @@ class andGate(simpleGate):
     def updateState(self):
         self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state and self.inputConnection['IN_1'].state
 
-    #
-    # Need to re-write this in a general/generic way, without any knowledge of the input/output names
-    # so that we can "promote" this method up to to the simpleGate class
-    #
-    def printState(self):
-        print()
-        print("IN_0      IN_1    OUT_0")
-        print("-----     -----   -----")
-        print("{!r:<5} AND {!r:<5} = {!r:<5}".format(self.inputConnection['IN_0'].state,self.inputConnection['IN_1'].state,self.outputConnection['OUT_0'].state))
-        print()
 
 
 class orGate(simpleGate):
@@ -114,16 +104,6 @@ class orGate(simpleGate):
     def updateState(self):
         self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state or self.inputConnection['IN_1'].state
 
-    #
-    # Need to re-write this in a general/generic way, without any knowledge of the input/output names
-    # so that we can "promote" this method up to to the simpleGate class
-    #
-    def printState(self):
-        print()
-        print("IN_0     IN_1    OUT_0")
-        print("-----    -----   -----")
-        print("{!r:<5} OR {!r:<5} = {!r:<5}".format(self.inputConnection['IN_0'].state,self.inputConnection['IN_1'].state,self.outputConnection['OUT_0'].state))
-        print()
 
 
 class xorGate(simpleGate):
@@ -146,17 +126,6 @@ class xorGate(simpleGate):
         # Python does not implement a logical XOR operator, but because we are storing
         # state using the Boolean type, we can use the Bitwise XOR operator here
         self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state ^ self.inputConnection['IN_1'].state
-
-    #
-    # Need to re-write this in a general/generic way, without any knowledge of the input/output names
-    # so that we can "promote" this method up to to the simpleGate class
-    #
-    def printState(self):
-        print()
-        print("IN_0      IN_1    OUT_0")
-        print("-----     -----   -----")
-        print("{!r:<5} XOR {!r:<5} = {!r:<5}".format(self.inputConnection['IN_0'].state,self.inputConnection['IN_1'].state,self.outputConnection['OUT_0'].state))
-        print()
 
 
 
