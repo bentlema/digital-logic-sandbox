@@ -34,6 +34,36 @@ class simpleGate():
         self.updateState()
 
 
+class notGate(simpleGate):
+
+    def __init__(self):
+
+        # Dictionaries to keep track of inputs and outputs
+        self.inputConnection = {}
+        self.outputConnection = {}
+
+        # A NOT gate has a single input and a single output connection
+        self.inputConnection['IN_0'] = inputConnection('Input')
+        self.outputConnection['OUT_0'] = outputConnection('Output')
+
+        # Ensure initial value of output is correct
+        self.updateState()
+
+    def updateState(self):
+        self.outputConnection['OUT_0'].state = not self.inputConnection['IN_0'].state
+
+    #
+    # Need to re-write this in a general/generic way, without any knowledge of the input/output names
+    # so that we can "promote" this method up to to the simpleGate class
+    #
+    def printState(self):
+        print()
+        print("    IN_0    OUT_0")
+        print("    -----   -----")
+        print("NOT {!r:<5} = {!r:<5}".format(self.inputConnection['IN_0'].state,self.outputConnection['OUT_0'].state))
+        print()
+
+
 class andGate(simpleGate):
 
     def __init__(self):
@@ -46,6 +76,9 @@ class andGate(simpleGate):
         self.inputConnection['IN_0'] = inputConnection('Input 0')
         self.inputConnection['IN_1'] = inputConnection('Input 1')
         self.outputConnection['OUT_0'] = outputConnection('Output')
+
+        # Ensure initial value of output is correct
+        self.updateState()
 
     def updateState(self):
         self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state and self.inputConnection['IN_1'].state
@@ -75,6 +108,9 @@ class orGate(simpleGate):
         self.inputConnection['IN_1'] = inputConnection('Input 1')
         self.outputConnection['OUT_0'] = outputConnection('Output')
 
+        # Ensure initial value of output is correct
+        self.updateState()
+
     def updateState(self):
         self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state or self.inputConnection['IN_1'].state
 
@@ -102,6 +138,9 @@ class xorGate(simpleGate):
         self.inputConnection['IN_0'] = inputConnection('Input 0')
         self.inputConnection['IN_1'] = inputConnection('Input 1')
         self.outputConnection['OUT_0'] = outputConnection('Output')
+
+        # Ensure initial value of output is correct
+        self.updateState()
 
     def updateState(self):
         # Python does not implement a logical XOR operator, but because we are storing
