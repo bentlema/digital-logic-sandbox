@@ -84,8 +84,40 @@ class orGate(simpleGate):
     #
     def printState(self):
         print()
-        print("IN_0      IN_1    OUT_0")
-        print("-----     -----   -----")
+        print("IN_0     IN_1    OUT_0")
+        print("-----    -----   -----")
         print("{!r:<5} OR {!r:<5} = {!r:<5}".format(self.inputConnection['IN_0'].state,self.inputConnection['IN_1'].state,self.outputConnection['OUT_0'].state))
         print()
+
+
+class xorGate(simpleGate):
+
+    def __init__(self):
+
+        # Dictionaries to keep track of inputs and outputs
+        self.inputConnection = {}
+        self.outputConnection = {}
+
+        # An XOR gate has two input connections and one output connection
+        self.inputConnection['IN_0'] = inputConnection('Input 0')
+        self.inputConnection['IN_1'] = inputConnection('Input 1')
+        self.outputConnection['OUT_0'] = outputConnection('Output')
+
+    def updateState(self):
+        # Python does not implement a logical XOR operator, but because we are storing
+        # state using the Boolean type, we can use the Bitwise XOR operator here
+        self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state ^ self.inputConnection['IN_1'].state
+
+    #
+    # Need to re-write this in a general/generic way, without any knowledge of the input/output names
+    # so that we can "promote" this method up to to the simpleGate class
+    #
+    def printState(self):
+        print()
+        print("IN_0      IN_1    OUT_0")
+        print("-----     -----   -----")
+        print("{!r:<5} XOR {!r:<5} = {!r:<5}".format(self.inputConnection['IN_0'].state,self.inputConnection['IN_1'].state,self.outputConnection['OUT_0'].state))
+        print()
+
+
 
