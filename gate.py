@@ -16,7 +16,7 @@ class outputConnection():
 
 
 
-class simpleGate():
+class logicGate():
 
     def printState(self):
 
@@ -44,7 +44,7 @@ class simpleGate():
 
 
 
-class notGate(simpleGate):
+class notGate(logicGate):
 
     def __init__(self):
 
@@ -64,7 +64,7 @@ class notGate(simpleGate):
 
 
 
-class andGate(simpleGate):
+class andGate(logicGate):
 
     def __init__(self):
 
@@ -85,7 +85,7 @@ class andGate(simpleGate):
 
 
 
-class orGate(simpleGate):
+class orGate(logicGate):
 
     def __init__(self):
 
@@ -106,7 +106,7 @@ class orGate(simpleGate):
 
 
 
-class xorGate(simpleGate):
+class xorGate(logicGate):
 
     def __init__(self):
 
