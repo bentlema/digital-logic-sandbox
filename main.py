@@ -2,9 +2,13 @@
 
 from gate import logicGate, andGate, orGate, xorGate, notGate
 
+foo = andGate()
+bar = orGate()
+lah = xorGate()
+dee = notGate()
+
 print()
 print("AND Gate")
-foo = andGate()
 foo.printState()
 print()
 foo.toggleInputStateByName('IN_0')
@@ -20,7 +24,6 @@ foo.toggleInputStateByName('IN_1')
 foo.printState()
 print()
 print("OR Gate")
-bar = orGate()
 bar.printState()
 print()
 bar.toggleInputStateByName('IN_0')
@@ -36,7 +39,6 @@ bar.toggleInputStateByName('IN_1')
 bar.printState()
 print()
 print("XOR Gate")
-lah = xorGate()
 lah.printState()
 print()
 lah.toggleInputStateByName('IN_0')
@@ -52,7 +54,6 @@ lah.toggleInputStateByName('IN_1')
 lah.printState()
 print()
 print("NOT Gate")
-dee = notGate()
 dee.printState()
 print()
 dee.toggleInputStateByName('IN_0')
@@ -66,4 +67,16 @@ print()
 Wouldn't it be cool to write a method that would print out the truth table for the gate?
 Let's do that next...
 '''
+
+
+print()
+foo.printTruthTable()
+print()
+bar.printTruthTable()
+print()
+lah.printTruthTable()
+print()
+dee.printTruthTable()
+print()
+
 
