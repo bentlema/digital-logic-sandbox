@@ -155,3 +155,71 @@ dee.toggleInputStateByName('IN_0')
 dee.printState()
 
 
+
+
+Okay, right now we have a generic logicGate class.
+We also have specific gates that inherit from the logicGate class.
+The behavior of the specific gates is hard-coded, like a primative.
+For example, we have an andGate, orgate, xorGate, notGate.
+Questions:
+   - do we really want to have these primatives?
+   - would the code be easier to maintain if we "created" each of these gates with their behavior dynamically?
+   - what if we could create the primative gates at startup, rather than having them hard coded?
+
+
+andGate = logicGate('AND')         # Give it a name
+andGate.createInputConnection(2)   # add 2 inputConnections
+andGate.createOutputConnection(1)  # add 1 outputConnection (could a gate have more than 1 output connection?)
+
+# Build the truth table for an AND gate
+and_truth = [[0 for x in range(2)] for y in range(2)]
+and_truth[0][0] = 0
+and_truth[0][1] = 0
+and_truth[1][0] = 0
+and_truth[1][1] = 1
+
+# Configure the gate to use the truth table
+andGate.defineTruthTable(and_truth)
+
+At this point we'd have a gate the behaves like an AND gate
+
+Anyway, we'd still end up defining an andGate class, because we would want to
+be able to create many many instances of an andGate, and we don't want to have
+to write all of that code every time to create 1 gate dynamically.
+
+The interesting thing to consider is, with all outputs pre-calculated, would
+it be faster than calculating the output with the logical operators?
+
+Using the truth table method is certainly more general, and would make it easy
+to create, say, 3 or more input gates if we wanted to (like a 3 input AND gate).
+
+In fact, if we were using the truth table to define gate behavior, we could
+even make a fullAdder "gate" with 2-inputs and 2-outputs.  This is a case where
+we'd have more than one output.  Interesting.
+
+Need to start looking at how we will implement gate connections, so we can
+connect one gate to another gate through a "Wire" object.  We need a wire
+object so that we can eventually draw the wire on the screen, and eventually
+we may want to be able to implement latency, so all gates and wire could have
+a certain amount of latency.  We'd then be able to implement the "Buffer"
+gate, which is really just like a wire with some latency/delay.
+
+
+We also need "special purpose gates" that arn't really gates, but circuit
+elements:
+
+Input elements:
+
+1) Toggle Switch (input that we can flip on/off via the GUI)
+2) Clock source (really like a toggle switch that toggles on/off automatically at certain Hz rate)
+3) Fixed HI source (really just a toggle switch that is always on/1/true)
+4) Fixed LO source (really just a toggle switch that is always off/0/false)
+
+Output elements:
+
+1) an LED / lamp - some GUI element that would indicate if the signal is HI/LO, ON/OFF, 0/1, true/false
+2) 7-segment display (really just 8 LED's aranged in a special way, 8th is the decimal point)
+
+
+
+
