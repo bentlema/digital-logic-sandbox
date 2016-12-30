@@ -68,15 +68,19 @@ Wouldn't it be cool to write a method that would print out the truth table for t
 Let's do that next...
 '''
 
+print('AND Gate Truth Table')
+foo.printTruthTable()
+
+print('OR Gate Truth Table')
+bar.printTruthTable()
+
+print('XOR Gate Truth Table')
+lah.printTruthTable()
+
+print('NOT Gate Truth Table')
+dee.printTruthTable()
 
 print()
-foo.printTruthTable()
-print()
-bar.printTruthTable()
-print()
-lah.printTruthTable()
-print()
-dee.printTruthTable()
-print()
+
 
 

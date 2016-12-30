@@ -44,6 +44,41 @@ Potential Object Attributes...
 
 Python only implements:  AND, OR, NOT, but we can use the bitwise XOR since we are working with Boolean types
 
+Hash of 2-dimensional arrays:
+
+
+
+#
+# Make 2x2 matrix (2-dimensional list/array)
+#
+
+and_truth = [[0 for x in range(2)] for y in range(2)]
+
+#
+# Populate the 2x2 array with values for and AND gate
+#
+
+and_truth[0][0] = 0
+and_truth[0][1] = 0
+and_truth[1][0] = 0
+and_truth[1][1] = 1
+
+#
+# Plop the 2x2 into a hash keyed off of gate type/name
+#
+
+truth_dict = {}
+truth_dict['AND'] = and_truth
+
+#
+# Show the value to prove the data structure is correct
+#
+
+truth_dict['AND'][0][0]
+truth_dict['AND'][0][1]
+truth_dict['AND'][1][0]
+truth_dict['AND'][1][1]
+
 AND
 
  P   Q  Out
@@ -79,7 +114,6 @@ NOT
  1   0
 
 
-
 foo = andGate()
 foo.printState()
 foo.toggleInputStateByName('IN_0')
@@ -102,7 +136,6 @@ bar.printState()
 bar.toggleInputStateByName('IN_1')
 bar.printState()
 
-
 lah = xorGate()
 lah.printState()
 lah.toggleInputStateByName('IN_0')
@@ -113,7 +146,6 @@ lah.toggleInputStateByName('IN_0')
 lah.printState()
 lah.toggleInputStateByName('IN_1')
 lah.printState()
-
 
 dee = notGate()
 dee.printState()

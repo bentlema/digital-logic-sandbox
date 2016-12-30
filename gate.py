@@ -20,7 +20,16 @@ class outputConnection():
 
 class logicGate():
 
-    def printTruthTable(self):
+    # Class variable: truthTable (shared by all instances)
+    # Key will be type of gate (such as 'AND', 'OR', 'NOT', etc.)
+    # Value will be a 2-dimensional list of lists
+    # We index into the list of lists with 2 indecies corresponding to the binary input values
+    # The output is stored as the actual value within the matrix
+    # We initialize the dictionary here, but the more specific gate objects will
+    # define the actual truth table
+    truthTable = {}
+        
+    def printTruthTable(self, gateName):
         numberOfInputs = len(self.inputConnection)
         # Think of number of inputs as a binary string of bits
         # 1 input requires 1 bit
@@ -30,21 +39,12 @@ class logicGate():
         formatString = "{:0" + str(numberOfInputs) + "b}"     # binary number stringified
         for i in range(inputPermutations):
             myBits = formatString.format(i)
-            '''
-                take a look at http://stackoverflow.com/questions/1679384/converting-python-dictionary-to-list
-                we have the input values being generated now, but still need to set those input values and
-                calculate the output value, and print.  Since we refer the inputConnections by name, we need
-                to create a mapping of connection names to connection number or something...either that, or
-                we need to reconsider storing the connection names as a dict, and maybe a list/array would
-                be more convenient...not sure yet. Maybe there's a way to store it both ways?
-            '''
             if (numberOfInputs == 1):
-                print(myBits[0], outputValue)
+                print(myBits[0], self.truthTable[gateName][int(myBits[0])])
             elif (numberOfInputs == 2):
-                print(myBits[0], myBits[1], outputValue)
+                print(myBits[0], myBits[1], self.truthTable[gateName][int(myBits[0])][int(myBits[1])] )
             elif (numberOfInputs == 3):
-                print(myBits[0], myBits[1], myBits[2], outputValue)
-            print()
+                print(myBits[0], myBits[1], myBits[2])
 
 
     def printState(self):
@@ -74,6 +74,15 @@ class logicGate():
 class notGate(logicGate):
 
     def __init__(self):
+        # List to store truth table inputs and outputs
+        # The NOT gate only has 1 input, so it's just a list, but for
+        # gates with 2 inputs, we'd have a list of lists
+        # Rather than dynamically generating the truth table, let's just
+        # define it statically for now.  We can get fancy later on.
+        self.myTruth = [0 for x in range(2)]
+        self.myTruth[0] = 1
+        self.myTruth[1] = 0
+        logicGate.truthTable['NOT'] = self.myTruth
 
         # Dictionaries to keep track of inputs and outputs
         self.inputConnection = {}
@@ -88,12 +97,24 @@ class notGate(logicGate):
 
     def updateState(self):
         self.outputConnection['OUT_0'].state = not self.inputConnection['IN_0'].state
+        
+    def printTruthTable(self):
+        logicGate.printTruthTable(self, 'NOT')
 
 
 
 class andGate(logicGate):
 
     def __init__(self):
+        # List of Lists to store truth table inputs and outputs
+        # Rather than dynamically generating the truth table, let's just
+        # define it statically for now.  We can get fancy later on.
+        self.myTruth = [[0 for x in range(2)] for y in range(2)]
+        self.myTruth[0][0] = 0
+        self.myTruth[0][1] = 0
+        self.myTruth[1][0] = 0
+        self.myTruth[1][1] = 1
+        logicGate.truthTable['AND'] = self.myTruth
 
         # Dictionaries to keep track of inputs and outputs
         self.inputConnection = {}
@@ -110,11 +131,23 @@ class andGate(logicGate):
     def updateState(self):
         self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state and self.inputConnection['IN_1'].state
 
+    def printTruthTable(self):
+        logicGate.printTruthTable(self, 'AND')
+
 
 
 class orGate(logicGate):
 
     def __init__(self):
+        # List of Lists to store truth table inputs and outputs
+        # Rather than dynamically generating the truth table, let's just
+        # define it statically for now.  We can get fancy later on.
+        self.myTruth = [[0 for x in range(2)] for y in range(2)]
+        self.myTruth[0][0] = 0
+        self.myTruth[0][1] = 1
+        self.myTruth[1][0] = 1
+        self.myTruth[1][1] = 1
+        logicGate.truthTable['OR'] = self.myTruth
 
         # Dictionaries to keep track of inputs and outputs
         self.inputConnection = {}
@@ -131,11 +164,23 @@ class orGate(logicGate):
     def updateState(self):
         self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state or self.inputConnection['IN_1'].state
 
+    def printTruthTable(self):
+        logicGate.printTruthTable(self, 'OR')
+
 
 
 class xorGate(logicGate):
 
     def __init__(self):
+        # List of Lists to store truth table inputs and outputs
+        # Rather than dynamically generating the truth table, let's just
+        # define it statically for now.  We can get fancy later on.
+        self.myTruth = [[0 for x in range(2)] for y in range(2)]
+        self.myTruth[0][0] = 0
+        self.myTruth[0][1] = 1
+        self.myTruth[1][0] = 1
+        self.myTruth[1][1] = 0
+        logicGate.truthTable['XOR'] = self.myTruth
 
         # Dictionaries to keep track of inputs and outputs
         self.inputConnection = {}
@@ -153,6 +198,11 @@ class xorGate(logicGate):
         # Python does not implement a logical XOR operator, but because we are storing
         # state using the Boolean type, we can use the Bitwise XOR operator here
         self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state ^ self.inputConnection['IN_1'].state
+
+    def printTruthTable(self):
+        logicGate.printTruthTable(self, 'XOR')
+        
+        
 
 
 
