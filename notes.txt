@@ -298,7 +298,9 @@ A_IN  B_IN  C_IN   S_OUT C_OUT
 
 Thought:  Let's not implement this more general case, as we'd end up with an "optimized" gate to work
 like a full-adder, instead of an IC that was built with the primative gates, and the latency would not
-be realistic as a result.  The "Full Adder Gate" would be artificially fast.
+be realistic as a result.  The "Full Adder Gate" would be artificially fast.  However, we could set
+the latency to represent whatever the realistic speed would be. I eventually want to implement this
+more general "gate by truth table" idea, but will keep it simple for now...
 
 It would still be cool to be able to print out a truth table for any IC.  We could build an input
 component that would be multiple clock sources (one for each input), and that would be set to different
