@@ -28,15 +28,15 @@ class logicGate():
     # We initialize the dictionary here, but the more specific gate objects will
     # define the actual truth table
     truthTable = {}
-        
+
     def printTruthTable(self, gateName):
         numberOfInputs = len(self.inputConnection)
         # Think of number of inputs as a binary string of bits
         # 1 input requires 1 bit
         # 2 inputs requires 2 bits
         # 3 inputs requires 3 bits, etc.
-        inputPermutations = int(math.pow(2, numberOfInputs))  # all possible input combinations
-        formatString = "{:0" + str(numberOfInputs) + "b}"     # binary number stringified
+        inputPermutations = int(math.pow(2, numberOfInputs))  # number of possible input combinations
+        formatString = "{:0" + str(numberOfInputs) + "b}"     # format to convert decimal to binary
         for i in range(inputPermutations):
             myBits = formatString.format(i)
             if (numberOfInputs == 1):
@@ -97,7 +97,7 @@ class notGate(logicGate):
 
     def updateState(self):
         self.outputConnection['OUT_0'].state = not self.inputConnection['IN_0'].state
-        
+
     def printTruthTable(self):
         logicGate.printTruthTable(self, 'NOT')
 
@@ -201,8 +201,5 @@ class xorGate(logicGate):
 
     def printTruthTable(self):
         logicGate.printTruthTable(self, 'XOR')
-        
-        
-
 
 
