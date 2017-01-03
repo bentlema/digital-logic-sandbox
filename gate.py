@@ -43,8 +43,6 @@ class logicGate():
                 print(myBits[0], self.truthTable[gateName][int(myBits[0])])
             elif (numberOfInputs == 2):
                 print(myBits[0], myBits[1], self.truthTable[gateName][int(myBits[0])][int(myBits[1])] )
-            elif (numberOfInputs == 3):
-                print(myBits[0], myBits[1], myBits[2])
 
 
     def printState(self):
