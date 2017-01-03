@@ -223,3 +223,92 @@ Output elements:
 
 
 
+
+
+i2 = [
+    (0, 0),
+    (0, 1),
+    (1, 0),
+    (1, 1)
+    ]
+
+i3 = [
+    (0, 0, 0),
+    (0, 0, 1),
+    (0, 1, 0),
+    (0, 1, 1),
+    (1, 0, 0),
+    (1, 0, 1),
+    (1, 1, 0),
+    (1, 1, 1)
+    ]
+
+
+for x, y, z in i3:
+   print("x {} y {} z {}".format(x,y,z))
+
+
+
+i4 = [
+    (0, 0, 0, 0),
+    (0, 0, 0, 1),
+    (0, 0, 1, 0),
+    (0, 0, 1, 1),
+    (0, 1, 0, 0),
+    (0, 1, 0, 1),
+    (0, 1, 1, 0),
+    (0, 1, 1, 1),
+    (1, 0, 0, 0),
+    (1, 0, 0, 1),
+    (1, 0, 1, 0),
+    (1, 0, 1, 1),
+    (1, 1, 0, 0),
+    (1, 1, 0, 1),
+    (1, 1, 1, 0),
+    (1, 1, 1, 1)
+    ]
+
+for w, x, y, z in i4:
+   print("w {} x {} y {} z {}".format(w,x,y,z))
+
+
+for a in i4:
+   print(a)
+
+
+
+How would we implement the truthTable is there could be more than one output, say in the case of a Full Adder?
+
+A_IN "Number A Input"
+B_IN  "Number B Input"
+C_IN  "Carry Input"
+S_OUT "Sum Output"
+C_OUT "Carry Output"
+
+A_IN  B_IN  C_IN   S_OUT C_OUT
+----- ----- -----  ----- -----
+  0     0     0      0     0
+  0     0     1      1     0
+  0     1     0      1     0
+  0     1     1      0     1
+  1     0     0      1     0
+  1     0     1      0     1
+  1     1     0      0     1
+  1     1     1      1     1
+
+Thought:  Let's not implement this more general case, as we'd end up with an "optimized" gate to work
+like a full-adder, instead of an IC that was built with the primative gates, and the latency would not
+be realistic as a result.  The "Full Adder Gate" would be artificially fast.
+
+It would still be cool to be able to print out a truth table for any IC.  We could build an input
+component that would be multiple clock sources (one for each input), and that would be set to different
+rates to ensure all inputs are covered.  For example, for a 4-input IC, we could use 4 clock sources
+with their rate set to:
+
+1 Hz 0101010101010101 0101010101010101 0101010101010101
+2 Hz 0011001100110011 0011001100110011 0011001100110011
+4 Hz 0000111100001111 0000111100001111 0000111100001111
+8 Hz 0000000011111111 0000000011111111 0000000011111111
+
+
+
