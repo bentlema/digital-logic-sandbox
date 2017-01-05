@@ -412,32 +412,81 @@ So, assume the above objects are all implemented...how would we make the connect
    - would we call methods on the gates?
    - or on the wires?
 
-Let's try implementing the make_connection() method on the wire (aka connector)
+Let's try implementing the connect() method on the wire (aka connector)
 
-wire1.make_connection(switchA.get_connection('OUT'),  xor1.get_connection('IN_0'))
-wire2.make_connection(switchB.get_connection('OUT'),  xor1.get_connection('IN_1'))
-wire3.make_connection(xor1.get_connection('OUT'),     xor2.get_connection('IN_0'))
-wire4.make_connection(switchC.get_connection('OUT'),  xor2.get_connection('IN_1'))
-wire5.make_connection(xor2.get_connection('OUT'),     lampS.get_connection('IN'))
-wire6.make_connection(switchA.get_connection('OUT'),  and1.get_connection('IN_0'))
-wire7.make_connection(switchB.get_connection('OUT'),  and1.get_connection('IN_1'))
-wire8.make_connection(and1.get_connection('OUT'),     or1.get_connection('IN_1'))
-wire9.make_connection(xor1.get_connection('OUT'),     and2.get_connection('IN_0'))
-wire10.make_connection(switchC.get_connection('OUT'), and2.get_connection('IN_1'))
-wire11.make_connection(and2.get_connection('OUT'),    and2.get_connection('IN_0'))
-wire12.make_connection(or1.get_connection('OUT'),     lampC.get_connection('IN'))
+If we want to connect two components to the same wire, we could do:
+
+wire.connect(outputConnection, inputConnection)   # Where outputConnection is the output of a circuit component
+                                                  # and inputConnection is one of the inputs of a circuit component
+                                                  # do we need to differentiate between input and output connections?
+
+wire1.connect(switchA.get_connection('OUT'),  xor1.get_connection('IN_0'))
+wire2.connect(switchB.get_connection('OUT'),  xor1.get_connection('IN_1'))
+wire3.connect(xor1.get_connection('OUT'),     xor2.get_connection('IN_0'))
+wire4.connect(switchC.get_connection('OUT'),  xor2.get_connection('IN_1'))
+wire5.connect(xor2.get_connection('OUT'),     lampS.get_connection('IN'))
+wire6.connect(switchA.get_connection('OUT'),  and1.get_connection('IN_0'))
+wire7.connect(switchB.get_connection('OUT'),  and1.get_connection('IN_1'))
+wire8.connect(and1.get_connection('OUT'),     or1.get_connection('IN_1'))
+wire9.connect(xor1.get_connection('OUT'),     and2.get_connection('IN_0'))
+wire10.connect(switchC.get_connection('OUT'), and2.get_connection('IN_1'))
+wire11.connect(and2.get_connection('OUT'),    and2.get_connection('IN_0'))
+wire12.connect(or1.get_connection('OUT'),     lampC.get_connection('IN'))
 
 ...so each logicGate would have a get_connection() method that returns the inputConnection or outputConnection object?
 
 Do we really need a separate "connection object"?  (Keep this question in mind, and come back to)
 
-How would we implement the make_connection() method? what would it do?
+How would we implement the connect() method? what would it do?
 
 I think our logicCircuit object needs to hold a list of wire/connection objects
 the logicCircuit object should have an update() method
 When we call logicCircuit.update() it will run through the list of objects (in
 the order they were connected?) and run the update() method on each what? each connection?
 
+Or do we design the gates and wires to "know" what they are connected to, so we
+could "ask" a gate "what is your IN_1 connected to?" and it would return a ref
+to the connected object, which we could then further interogate.
+
+The data structure would effectively be distributed throughout all of the
+logicCircuit components.
+
+There will be "simulation time" which will has some resolution (such as 1/4 sec, or 1/8 sec),
+and the simulation engine will run in a continuous loop, updating the circuit every slice
+of simulated time.
+
+We dont want to let the loop run as fast as python can, as this would show up
+as high CPU util on the system.  We do a time.sleep(sim_time_res) where
+sim_time_res is something like 1/4, 1/8, or 1/16 of a second.
+
+Run this for an example:
+
+#!/usr/bin/env python3
+
+import time
+
+world_time = 0.0
+
+# Use one over a power of 2 such as:   1, 1/2, 1/4, 1/8, 1/16, 1/32, 1/64
+world_time_res = 1/4     # resolution (e.g 1/10th of a sec)
+
+clock_source = int(0)    # current value of clock source (0 or 1 / Hi or Lo)
+clock_hz = int(1)        # in seconds
+clock_elapsed = 0.0      # keep track of elapsed time since last transition
+                         # after clock_hz, we transition Hi or Lo
+
+while (world_time < 10):
+   print('The world_time is: {0:7.2f} clock_source: {1} elapsed {2:6.2f}'.format(world_time,clock_source,clock_elapsed))
+   world_time = world_time + world_time_res
+   clock_elapsed = clock_elapsed + world_time_res
+   if ( clock_elapsed >= clock_hz ):
+      print ('--- TICK -----------------------------------------------------------------------------')
+      clock_elapsed = 0.0
+      if ( clock_source == 1 ):
+         clock_source = 0
+      else:
+         clock_source = 1
+   time.sleep(world_time_res)
 
 
 
@@ -447,18 +496,47 @@ the order they were connected?) and run the update() method on each what? each c
 
 
 
+State Propagation
+------------------
+
+
+Example:
+
+    2-input-gate-with-1-output: we store state in 4 places:
+
+    inputConnection IN_0 state
+        - receives state via wire/connector from upstream component's outputConnection
+    inputConnection IN_1 state
+        - receives state via wire/connector from upstream component's outputConnection
+    gate state
+        - needed for GUI display of gates state, either "ON" or "OFF", solid or outline)
+        - will propagate to the outputConnection after latency timer expires
+    outputConnection OUT state
+        - receives state from gate after latency timer expires
 
 
 
+what happens when we update any of these?
 
+    inputConnection['IN_0'].update()
+        - would simply check current state, and update GUI to show solid color for ON/HI, or outline for OFF/LO signal
+        - then call update() for the downstream component which would be the gate object itself
 
+    logicGate.update()
+        - just called by upstream component
+        - calculate state of gate based on the 2 inputs, and update gate state to new value
+        - if state of gate is ON/HI, then update GUI object with solid color, otherwise update with outline object
+        - call update() on downstream object only if latency timer has expired, which will be the outputConnection object
+        - otherwise, the propagate is "broken out of" so to speak
 
+   outputConnection('OUT').update()
+        - would simply check current state, and update GUI to show solid color for ON/HI, or outline for OFF/LO signal
+        - then call update() for the downstream component
 
+So, we are updating the circuit in "chains" of update() calls.   Visually, picture a line of update() calls starting
+with each inputComponent, and running through the circuit all the way to the outputComponent
 
-
-
-
-
-
+We could build a list of "propagation chains" and then run against them over and over again until a new GUI object is
+dragged, positioned, and wired up, and then we'd have to re-generate the chains
 
 

@@ -105,12 +105,9 @@ print()
 
 and1 = andGate()
 and2 = andGate()
-
 xor1 = xorGate()
 xor2 = xorGate()
-
 or1 = orGate()
-
 wire1 = wire()
 wire2 = wire()
 wire3 = wire()
