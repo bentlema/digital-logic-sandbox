@@ -6,12 +6,19 @@ Created on Dec 26, 2016
 
 import math
 
+
+
 class inputConnection():
+
     def __init__(self,label):
         self.state = bool(False)
         self.label = label
+        self.upstreamComponent = 0 # object ref once connected
+
+
 
 class outputConnection():
+
     def __init__(self,label):
         self.state = bool(False)
         self.label = label
@@ -46,6 +53,7 @@ class logicGate():
 
 
     def printState(self):
+        self.updateState()
         for i in self.inputConnection.keys():
             print("{} = {}".format(self.inputConnection[i].label,self.inputConnection[i].state))
         for o in self.outputConnection.keys():
@@ -66,6 +74,12 @@ class logicGate():
     def setInputStateByName(self,connName,state):
         self.inputConnection[connName].state = state
         self.updateState()
+
+    def connectByName(self,connName,connectTo):
+        # I dont think this is going to work, as we're building our references in the wrong
+        # direction.  We need to be able to traverse the entire circuit from the upstream
+        # input sources,but out connections go in the other direction currently.
+        self.inputConnection[connName].upstreamComponent = connectTo
 
 
 
@@ -199,5 +213,69 @@ class xorGate(logicGate):
 
     def printTruthTable(self):
         logicGate.printTruthTable(self, 'XOR')
+
+
+
+class bufferGate(logicGate):
+
+    def __init__(self):
+        self.myTruth = [0 for x in range(2)]
+        self.myTruth[0] = 0
+        self.myTruth[1] = 1
+        logicGate.truthTable['Buffer'] = self.myTruth
+
+        # Dictionaries to keep track of inputs and outputs
+        self.inputConnection = {}
+        self.outputConnection = {}
+
+        # A Buffer "gate" has a single input and a single output connection
+        # A buffer is simply a gate that introduces a delay (or latency) but
+        # we have not implemented latency yet.
+        self.inputConnection['IN_0'] = inputConnection('Input')
+        self.outputConnection['OUT_0'] = outputConnection('Output')
+
+        # Ensure initial value of output is correct
+        self.updateState()
+
+    def updateState(self):
+        self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state
+
+    def printTruthTable(self):
+        logicGate.printTruthTable(self, 'Buffer')
+
+
+
+class wire(logicGate):
+
+    def __init__(self):
+        self.myTruth = [0 for x in range(2)]
+        self.myTruth[0] = 0
+        self.myTruth[1] = 1
+        logicGate.truthTable['Wire'] = self.myTruth
+
+        # Dictionaries to keep track of inputs and outputs
+        self.inputConnection = {}
+        self.outputConnection = {}
+
+        # A wire has a single input and a single output connection
+        # A wire is identical to a "buffer gate" at this time, but that
+        # will change when we start adding in the GUI code to draw the
+        # objects, so we will define separate objects now
+        #
+        # Also, we need to evaluate if it's really necessary to define
+        # wire, or should be just connected gates directly to other gates?
+        # This should become more clear once we begin implementing the GUI
+        self.inputConnection['IN_0'] = inputConnection('Input')
+        self.outputConnection['OUT_0'] = outputConnection('Output')
+
+        # Ensure initial value of output is correct
+        self.updateState()
+
+    def updateState(self):
+        self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state
+
+    def printTruthTable(self):
+        logicGate.printTruthTable(self, 'Buffer')
+
 
 

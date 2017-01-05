@@ -314,3 +314,151 @@ with their rate set to:
 
 
 
+
+
+
+
+inputConnections and outputConnections
+--------------------------------------
+
+All logicGates have a set of inputConnections and a single outputConnection
+
+A logicCircuit contains many logicGates, and connection data
+
+Since wire is really just a buffer gate (or dummy gate the just passes signal), we really don't need a separate
+wire object, except when we get to developing the GUI, we will need to be able to draw the connections, so not
+really sure yet if it will be useful to have a true wire object, or just treat wire as just another logicGate?
+
+Let's start playing with how we are going to connect gates together.
+
+   - Should each gate have knowledge about what it's connected to? both inputs and outputs?
+   - Or should the higher-level logicCircuit object contain all of the connection information?
+   - or both?
+
+...I'm going to start with the second option:  there will be a logicCircuit object, and it will contain
+all of the connection info about the gates contained within.
+
+If we do this right, our logicCircuit could later become an integratedCircuit, which could be used to build up
+more complex circuits.  E.g. Flip-flops would be implemented as as integrated circuits.
+
+
+the logicCircuit class
+----------------------
+
+I'm having trouble thinking about how things should be connected together, so let's start to zoom
+out and look at a higher-level object in the hierarchy:  the logicCircuit object
+
+Questions:
+   -  Will the logicCircuit be within the hierarchy of a logicGate?
+   -  Or will the logicCircuit only contain other logicGate objects?  <--- I think this, but not sure
+   -  a logicCircuit should be able to become an intergated circuit
+
+The logicCircuit will contain circuit components:
+   - logicGate (andGate, orGate, notGate, etc.)
+   - inputComponent (switch, clock source, input pin, etc.)
+   - outputComponent (LED, 7-deg display, output pin, etc.)
+   - connections
+
+The question is:  what do these connections look like?  How should be keep track of connections
+such that we can trigger a cascading update of a circuit?  Say, if I flip a switch from 0 to 1,
+then I want that to trigger the entire circuit to update itself.
+
+Two things come to mind:
+   1) will the circuit be "running" continuously (like a real simulation)?
+   2) or will it only update when something changes?
+
+I think the 1st option is the best, as we it will be easier to plot out signal at certain points
+if we are attaching a probe to a circuit, and then we know for sure that the circuit is "live".
+We want the model to accurately represent a real physical circuit.
+
+Let's try to draw out  how we would define a circuit, and see if that helps...
+
+Let's define a full adder.  It has a mixture of gates, and examples of outputs that have multiple destinations
+(the output of some components connects to multiple inputs of other components)
+
+switchA = switch()
+switchB = switch()
+switchC = switch()
+
+xor1 = xorGate()
+wire1 = wire()        # switchA OUT --> xor1 IN_0
+wire2 = wire()        # switchB OUT --> xor1 IN_1
+
+lampS = lamp()
+xor2 = xorGate()
+wire3 = wire()        # xor1 OUT    --> xor2 IN_0
+wire4 = wire()        # switchC OUT --> xor2 IN_1
+wire5 = wire()        # xor2 OUT    --> lampS IN
+
+and1 = andGate()
+wire6 = wire()        # switchA OUT --> and1 IN_0
+wire7 = wire()        # switchB OUT --> and1 IN_1
+
+and2 = andGate()
+wire9 = wire()        # xor1 OUT    --> and2 IN_0
+wire10 = wire()       # switchC OUT --> and2 IN_1
+
+or1 = orGate()
+wire8 = wire()        # and1 OUT   --> or1 IN_1
+wire11 = wire()       # and2 OUT   --> or1 IN_0
+
+lampC = lamp()
+wire12 = wire()       # or1 OUT    --> lampC IN
+
+I've drawn out what is connected to what next to each wire
+
+So, assume the above objects are all implemented...how would we make the connections stick?
+
+   - would we call methods on the gates?
+   - or on the wires?
+
+Let's try implementing the make_connection() method on the wire (aka connector)
+
+wire1.make_connection(switchA.get_connection('OUT'),  xor1.get_connection('IN_0'))
+wire2.make_connection(switchB.get_connection('OUT'),  xor1.get_connection('IN_1'))
+wire3.make_connection(xor1.get_connection('OUT'),     xor2.get_connection('IN_0'))
+wire4.make_connection(switchC.get_connection('OUT'),  xor2.get_connection('IN_1'))
+wire5.make_connection(xor2.get_connection('OUT'),     lampS.get_connection('IN'))
+wire6.make_connection(switchA.get_connection('OUT'),  and1.get_connection('IN_0'))
+wire7.make_connection(switchB.get_connection('OUT'),  and1.get_connection('IN_1'))
+wire8.make_connection(and1.get_connection('OUT'),     or1.get_connection('IN_1'))
+wire9.make_connection(xor1.get_connection('OUT'),     and2.get_connection('IN_0'))
+wire10.make_connection(switchC.get_connection('OUT'), and2.get_connection('IN_1'))
+wire11.make_connection(and2.get_connection('OUT'),    and2.get_connection('IN_0'))
+wire12.make_connection(or1.get_connection('OUT'),     lampC.get_connection('IN'))
+
+...so each logicGate would have a get_connection() method that returns the inputConnection or outputConnection object?
+
+Do we really need a separate "connection object"?  (Keep this question in mind, and come back to)
+
+How would we implement the make_connection() method? what would it do?
+
+I think our logicCircuit object needs to hold a list of wire/connection objects
+the logicCircuit object should have an update() method
+When we call logicCircuit.update() it will run through the list of objects (in
+the order they were connected?) and run the update() method on each what? each connection?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
