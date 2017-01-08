@@ -121,60 +121,100 @@ wire10 = wire()
 wire11 = wire()
 wire12 = wire()
 
+# Since we dont have switches or lamps yet, I'm using a buffer gate
+# which will allow me to set a state manually and test
 #switchA = circuitInput('IN_A', 'toggle') # input A
+switchA = bufferGate()
 #switchB = circuitInput('IN_B', 'toggle') # input B
+switchB = bufferGate()
 #switchC = circuitInput('IN_C', 'toggle') # input Carry
+switchC = bufferGate()
 
 #lampS = circuitOutput('OUT_S') # shown in GUI as a lamp/LED
+lampS = bufferGate()
 #lampC = circuitOutput('OUT_C') # shown in GUI as a lamp/LED
+lampC = bufferGate()
 
-xor1.connectByName('IN_0', wire1.outputConnection['OUT_0']) # Connect xor1 IN_0 to wire1 output
-xor1.connectByName('IN_1', wire2.outputConnection['OUT_0']) # Connect xor1 IN_1 to wire2 output
+wire1.connect(switchA.outputConnection['OUT_0'],  xor1.inputConnection['IN_0'])
+wire2.connect(switchB.outputConnection['OUT_0'],  xor1.inputConnection['IN_1'])
+wire3.connect(xor1.outputConnection['OUT_0'],     xor2.inputConnection['IN_0'])
+wire4.connect(switchC.outputConnection['OUT_0'],  xor2.inputConnection['IN_1'])
+wire5.connect(xor2.outputConnection['OUT_0'],     lampS.inputConnection['IN_0'])
+wire6.connect(switchA.outputConnection['OUT_0'],  and1.inputConnection['IN_0'])
+wire7.connect(switchB.outputConnection['OUT_0'],  and1.inputConnection['IN_1'])
+wire8.connect(and1.outputConnection['OUT_0'],     or1.inputConnection['IN_1'])
+wire9.connect(xor1.outputConnection['OUT_0'],     and2.inputConnection['IN_0'])
+wire10.connect(switchC.outputConnection['OUT_0'], and2.inputConnection['IN_1'])
+wire11.connect(and2.outputConnection['OUT_0'],    or1.inputConnection['IN_0'])
+wire12.connect(or1.outputConnection['OUT_0'],     lampC.inputConnection['IN_0'])
 
-wire3.connectByName('IN_0', xor1) # connecte wire3 IN_0 to xor1 output
-
-xor2.connectByName('IN_0', wire3) # Connect xor2 IN_0 to wire3
-xor2.connectByName('IN_1', wire4) # Connect xor2 IN_1 to wire4
-
-wire5.connectByName('IN_0', xor2) # connecte wire3 IN_0 to xor1 output
-
-
-print()
-print("xor1")
-xor1.printState()
-
-print()
-print("wire1")
-wire1.printState()
-
-print()
-print("wire2")
-wire2.printState()
+# Try toggling these 3 inputs, and you'll see that this full adder works
+switchA.toggleInputStateByName('IN_0')
+switchB.toggleInputStateByName('IN_0')
+switchC.toggleInputStateByName('IN_0')
 
 print()
-print("toggle wire1")
-wire1.toggleInputStateByName('IN_0')
-wire1.printState()
+print("switchA")
+switchA.printState()
 
 print()
-print("xor1")
-xor1.printState()
+print("switchB")
+switchB.printState()
 
 print()
-print("toggle wire2")
-wire2.toggleInputStateByName('IN_0')
-wire2.printState()
+print("switchC")
+switchC.printState()
+
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+for obj in (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12):
+    obj.updateState()
+    
+print()
+print("lampS")
+lampS.printState()
 
 print()
-print("xor1")
-xor1.printState()
+print("lampC")
+lampC.printState()
 
-print()
-print("toggle wire1")
-wire1.toggleInputStateByName('IN_0')
-wire1.printState()
 
-print()
-print("xor1")
-xor1.printState()
+
 

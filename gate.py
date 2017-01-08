@@ -13,7 +13,6 @@ class inputConnection():
     def __init__(self,label):
         self.state = bool(False)
         self.label = label
-        self.upstreamComponent = 0 # object ref once connected
 
 
 
@@ -30,7 +29,7 @@ class logicGate():
     # Class variable: truthTable (shared by all instances)
     # Key will be type of gate (such as 'AND', 'OR', 'NOT', etc.)
     # Value will be a 2-dimensional list of lists
-    # We index into the list of lists with 2 indecies corresponding to the binary input values
+    # We index into the list of lists with 2 indexes corresponding to the binary input values
     # The output is stored as the actual value within the matrix
     # We initialize the dictionary here, but the more specific gate objects will
     # define the actual truth table
@@ -74,12 +73,6 @@ class logicGate():
     def setInputStateByName(self,connName,state):
         self.inputConnection[connName].state = state
         self.updateState()
-
-    def connectByName(self,connName,connectTo):
-        # I dont think this is going to work, as we're building our references in the wrong
-        # direction.  We need to be able to traverse the entire circuit from the upstream
-        # input sources,but out connections go in the other direction currently.
-        self.inputConnection[connName].upstreamComponent = connectTo
 
 
 
@@ -262,9 +255,15 @@ class wire(logicGate):
         # will change when we start adding in the GUI code to draw the
         # objects, so we will define separate objects now
         #
-        # Also, we need to evaluate if it's really necessary to define
-        # wire, or should be just connected gates directly to other gates?
-        # This should become more clear once we begin implementing the GUI
+        # The wire object is unique in that we treat it mostly like a
+        # gate, except for it's input and output get thrown away when
+        # it's connected to another gate, and it keeps references to
+        # the output and input connection objects of the things its
+        # linking together.  This way, when we call the update()
+        # method of a wire, it propagates the value of the input conn
+        # to the output connection, which is really propagating the 
+        # output of a logicGate, to the input of another logicGate.
+        #
         self.inputConnection['IN_0'] = inputConnection('Input')
         self.outputConnection['OUT_0'] = outputConnection('Output')
 
@@ -276,6 +275,19 @@ class wire(logicGate):
 
     def printTruthTable(self):
         logicGate.printTruthTable(self, 'Buffer')
-
+        
+    def connect(self,ccOut,ccIn):
+        # ccOut - circuit component output
+        # ccIn  - circuit component input
+        #
+        # We are connecting the output of one gate to the input of another gate
+        # We must pass in the outputConnection object and the inputConnection object
+        # We will point to these objects, and forget about the initial objs,
+        # which will just get garbage collected.  The reason we create the initial
+        # connection objects is so that if we want to connect multiple wires to
+        # another wire, to make a Y-wire, we could do that, and have a way to draw
+        # it on the circuit canvas
+        self.inputConnection['IN_0'] = ccOut  # the upstream circuit component output
+        self.outputConnection['OUT_0'] = ccIn # the downstream circuit component input
 
 

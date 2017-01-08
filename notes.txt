@@ -540,3 +540,34 @@ We could build a list of "propagation chains" and then run against them over and
 dragged, positioned, and wired up, and then we'd have to re-generate the chains
 
 
+State Propagation and Loops in a Circuit
+----------------------------------------
+
+I was thinking about how to propagate state through a circuit, and the idea of each gate calling it's own update()
+method, and then immediately calling the update() method of connected gates, would work, but only if there were
+no loops in the circuit.  If there was a loop, like occurs in Flip Flops, then we'd end up stuck in an infinite
+stream of calls to one part of the circuit, but we'd never get back to other parts of the circuit outside the
+loop.
+
+We also want to ensure that all gates appear to be updating at the same time, such that there is a progression
+from left to right (with all inputs on the left, moving through the paths in the middle, to the outputs on the
+left).  We want a bredth-first propagation pattern, not a depth-first pattern. Although, I've not thought of
+a specific case where depth-first could cause a problem, I'm trying to model how a real circuit would work, so
+that we can eventually simulate real-world scenarios, and even real-world circuit design problems.
+
+With all of that said, I think the solution to this propagation problem is to simply view a circuit as a collection
+of objects, and we update them one-by-one in the order that they were added.  The logicCircuit object would
+contain a list of objects (inputs, gates, wires, outputs), and just run through the list over and over and over
+again in a super fast loop, updating each object.  Since the "simulated time clock" will be running much
+faster than a clock source in the circuit, every gate will be updated many times in between each clock source
+tick, we don't have to worry about the objects themselves calling update on their downstream neighbor, because
+we'll be updating every circuit component hundreds of times a second.  The "update resolution" will be much
+more granular than any clock source in the circuit itself.  Think of this as a "game loop" like you'd have in
+a real-time action shooter game where the graphics on the screen are being updated many times per second, but
+in this case, we will be updating the state of our circuit over and over in a loop many times per second.
+
+
+
+
+
+
