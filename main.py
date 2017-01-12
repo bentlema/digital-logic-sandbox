@@ -2,87 +2,6 @@
 
 from gate import logicGate, andGate, orGate, xorGate, notGate, bufferGate, wire
 
-foo = andGate()
-bar = orGate()
-lah = xorGate()
-dee = notGate()
-
-print()
-print("AND Gate")
-foo.printState()
-print()
-foo.toggleInputStateByName('IN_0')
-foo.printState()
-print()
-foo.toggleInputStateByName('IN_1')
-foo.printState()
-print()
-foo.toggleInputStateByName('IN_0')
-foo.printState()
-print()
-foo.toggleInputStateByName('IN_1')
-foo.printState()
-print()
-print("OR Gate")
-bar.printState()
-print()
-bar.toggleInputStateByName('IN_0')
-bar.printState()
-print()
-bar.toggleInputStateByName('IN_1')
-bar.printState()
-print()
-bar.toggleInputStateByName('IN_0')
-bar.printState()
-print()
-bar.toggleInputStateByName('IN_1')
-bar.printState()
-print()
-print("XOR Gate")
-lah.printState()
-print()
-lah.toggleInputStateByName('IN_0')
-lah.printState()
-print()
-lah.toggleInputStateByName('IN_1')
-lah.printState()
-print()
-lah.toggleInputStateByName('IN_0')
-lah.printState()
-print()
-lah.toggleInputStateByName('IN_1')
-lah.printState()
-print()
-print("NOT Gate")
-dee.printState()
-print()
-dee.toggleInputStateByName('IN_0')
-dee.printState()
-print()
-dee.toggleInputStateByName('IN_0')
-dee.printState()
-print()
-
-'''
-Wouldn't it be cool to write a method that would print out the truth table for the gate?
-Let's do that next...
-'''
-
-print('AND Gate Truth Table')
-foo.printTruthTable()
-
-print('OR Gate Truth Table')
-bar.printTruthTable()
-
-print('XOR Gate Truth Table')
-lah.printTruthTable()
-
-print('NOT Gate Truth Table')
-dee.printTruthTable()
-
-print()
-
-
 #
 # How would we define a full adder?
 #
@@ -120,6 +39,9 @@ wire9 = wire()
 wire10 = wire()
 wire11 = wire()
 wire12 = wire()
+
+# later on we will create the circuit class, but for now let's just do this...
+circuit1 = (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire6, wire7, wire8, wire9, wire10, wire11, wire12)
 
 # Since we dont have switches or lamps yet, I'm using a buffer gate
 # which will allow me to set a state manually and test
