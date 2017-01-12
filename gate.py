@@ -36,6 +36,7 @@ class logicGate():
     truthTable = {}
 
     def printTruthTable(self, gateName):
+        # inputConnection is a dictionary, so len() of it is the number of elements in the dictionary
         numberOfInputs = len(self.inputConnection)
         # Think of number of inputs as a binary string of bits
         # 1 input requires 1 bit
@@ -45,6 +46,7 @@ class logicGate():
         formatString = "{:0" + str(numberOfInputs) + "b}"     # format to convert decimal to binary
         for i in range(inputPermutations):
             myBits = formatString.format(i)
+            # if we ever add a 3-input gate (or more) we will have to add additional conditions below
             if (numberOfInputs == 1):
                 print(myBits[0], self.truthTable[gateName][int(myBits[0])])
             elif (numberOfInputs == 2):
