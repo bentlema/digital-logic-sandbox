@@ -274,7 +274,7 @@ class wire(logicGate):
         self.outputConnection['OUT_0'].state = self.inputConnection['IN_0'].state
 
     def printTruthTable(self):
-        logicGate.printTruthTable(self, 'Buffer')
+        logicGate.printTruthTable(self, 'Wire')
         
     def connect(self,ccOut,ccIn):
         # ccOut - circuit component output
