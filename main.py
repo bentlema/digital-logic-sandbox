@@ -80,6 +80,8 @@ switchA.setInputStateByName('IN_0', bool(0))
 switchB.setInputStateByName('IN_0', bool(0))
 switchC.setInputStateByName('IN_0', bool(0))
 
+print('--------------------------------------------------------------------------------')
+
 numberOfInputs = 3                                    # The full adder with carry has 3 inputs
 inputPermutations = int(math.pow(2, numberOfInputs))  # all possible input combinations
 formatString = "{:0" + str(numberOfInputs) + "b}"     # binary number stringified
@@ -99,7 +101,7 @@ for i in range(inputPermutations):
         for obj in circuit1:
             obj.updateState()
         counter -= 1
-    
+
     print()
     print("lampS (Sum)")
     lampS.printState()
@@ -109,6 +111,10 @@ for i in range(inputPermutations):
     lampC.printState()
     print()
 
+print('--------------------------------------------------------------------------------')
 
 
-
+#
+# Next, let's work on making the circuit() class, so that we can easily copy a circuit
+# object, and then link together multiple 2-bit full adders to make an 8-bit full adder
+#
