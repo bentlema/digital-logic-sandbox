@@ -4,13 +4,13 @@ import math
 from gate import logicGate, andGate, orGate, xorGate, notGate, bufferGate, wire
 
 #
-# How would we define a full adder?
+# How would we define a 1-bit full adder?
 #
 # We need the following gates:
 #
-#     - 3 x AND Gate
+#     - 2 x AND Gate
 #     - 2 x XOR Gate
-#     - 2 x OR Gate (or a single 3-input OR Gate)
+#     - 1 x OR Gate
 #
 # We also need 3 toggle switches for inputs
 # And two LEDs/Lamps for outputs
@@ -50,7 +50,7 @@ circuit1 = (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire
 switchA = bufferGate()
 #switchB = circuitInput('IN_B', 'toggle') # input B
 switchB = bufferGate()
-#switchC = circuitInput('IN_C', 'toggle') # input Carry
+#switchC = circuitInput('IN_C', 'toggle') # input Carry IN
 switchC = bufferGate()
 #lampS = circuitOutput('OUT_S') # shown in GUI as a lamp/LED
 lampS = bufferGate()
@@ -116,5 +116,5 @@ print('-------------------------------------------------------------------------
 
 #
 # Next, let's work on making the circuit() class, so that we can easily copy a circuit
-# object, and then link together multiple 2-bit full adders to make an 8-bit full adder
+# object, and then link together multiple 1-bit full adders to make an 8-bit full adder
 #
