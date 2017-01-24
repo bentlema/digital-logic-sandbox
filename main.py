@@ -3,6 +3,10 @@
 import math
 from gate import logicGate, andGate, orGate, xorGate, notGate, bufferGate, wire
 
+from tkinter import *
+from tkinter import ttk
+from pip.status_codes import PREVIOUS_BUILD_DIR_ERROR
+
 #
 # How would we define a 1-bit full adder?
 #
@@ -118,3 +122,33 @@ print('-------------------------------------------------------------------------
 # Next, let's work on making the circuit() class, so that we can easily copy a circuit
 # object, and then link together multiple 1-bit full adders to make an 8-bit full adder
 #
+
+
+
+root = Tk()
+
+def mouse_press(event):
+    global prev
+    prev = event
+    print('type: {}'.format(event.type))
+    print('widget: {}'.format(event.widget))
+    print('num: {}'.format(event.num))
+    print('x: {}'.format(event.x))
+    print('y: {}'.format(event.y))
+    print('x_root: {}'.format(event.x_root))
+    print('y_root: {}'.format(event.y_root))
+    print()
+    
+canvas = Canvas(root, width = 640, height = 480, background = 'gray')
+canvas.pack()
+
+def draw(event):
+    global prev
+    canvas.create_line(prev.x, prev.y, event.x, event.y, width = 5)
+    prev = event
+
+canvas.bind('<ButtonPress>', mouse_press)
+canvas.bind('<B1-Motion>', draw)
+
+root.mainloop()
+
