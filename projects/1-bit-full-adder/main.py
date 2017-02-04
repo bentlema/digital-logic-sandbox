@@ -80,7 +80,7 @@ switchA.setInputStateByName('IN_0', bool(0))
 switchB.setInputStateByName('IN_0', bool(0))
 switchC.setInputStateByName('IN_0', bool(0))
 
-print('--------------------------------------------------------------------------------')
+print('----------------------------------------------------------------------------------')
 
 numberOfInputs = 3                                    # The full adder with carry has 3 inputs
 inputPermutations = int(math.pow(2, numberOfInputs))  # all possible input combinations
@@ -90,7 +90,7 @@ for i in range(inputPermutations):
     a = bool(int(myBits[0])) # take single character out of string (which will be a 0 or 1
     b = bool(int(myBits[1])) # and convert to an int, and then convert to a boolean
     c = bool(int(myBits[2]))
-    print("SwitchA {},  SwitchB {},  SwitchC {}".format(a, b, c))
+    print("Input_A {:<5} + Input_B {:<5} + Carry_IN {:<5} ".format(str(a), str(b), str(c)), end="")
     switchA.setInputStateByName('IN_0', a)
     switchB.setInputStateByName('IN_0', b)
     switchC.setInputStateByName('IN_0', c)
@@ -102,16 +102,9 @@ for i in range(inputPermutations):
             obj.updateState()
         counter -= 1
 
-    print()
-    print("lampS (Sum)")
-    lampS.printState()
+    print("-->  Sum_OUT {:<5} Carry_OUT {:<5}".format(str(lampS.getOutputState()),str(lampC.getOutputState())))
 
-    print()
-    print("lampC (Carry)")
-    lampC.printState()
-    print()
-
-print('--------------------------------------------------------------------------------')
+print('----------------------------------------------------------------------------------')
 
 #
 # Next, let's work on making the circuit() class, so that we can easily copy a circuit

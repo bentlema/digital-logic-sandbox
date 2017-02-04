@@ -52,6 +52,16 @@ class logicGate():
             elif (numberOfInputs == 2):
                 print(myBits[0], myBits[1], self.truthTable[gateName][int(myBits[0])][int(myBits[1])] )
 
+    def getOutputState(self):
+        self.updateState()
+        # There should only ever be a single outputConnection, and therefore a single key
+        for o in self.outputConnection.keys():
+            return self.outputConnection[o].state
+
+    def getOutputStateByName(self,connName):
+        self.updateState()
+        return self.outputConnection[connName].state
+
     def printState(self):
         self.updateState()
         for i in self.inputConnection.keys():
