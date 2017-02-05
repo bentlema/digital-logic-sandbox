@@ -46,15 +46,10 @@ circuit1 = (and1, and2, xor1, xor2, or1, wire1, wire2, wire3, wire4, wire5, wire
 
 # Since we dont have switches or lamps yet, I'm using a buffer gate
 # which will allow me to set a state manually and test
-#switchA = circuitInput('IN_A', 'toggle') # input A
 switchA = bufferGate()
-#switchB = circuitInput('IN_B', 'toggle') # input B
 switchB = bufferGate()
-#switchC = circuitInput('IN_C', 'toggle') # input Carry IN
 switchC = bufferGate()
-#lampS = circuitOutput('OUT_S') # shown in GUI as a lamp/LED
 lampS = bufferGate()
-#lampC = circuitOutput('OUT_C') # shown in GUI as a lamp/LED
 lampC = bufferGate()
 
 # connect all the wires to the gates to make a full adder with carry
