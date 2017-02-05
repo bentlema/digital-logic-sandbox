@@ -1,0 +1,26 @@
+
+We want to add 2 x 1-bit numbers:
+
+C1 = Carry_IN
+C2 = Carry_OUT
+
+     C1
+      A     <-- 1-bit number A
+  +   B     <-- 1-bit number B
+ -------
+   C2 S     <-- Sum of number A and B
+
+
+Truth Table:
+
+ C1  B   A  |  C2  S
+--- --- --- | --- ---
+ 0   0   0  |  0   0
+ 0   0   1  |  0   1
+ 0   1   0  |  0   1
+ 0   1   1  |  1   0
+ 1   0   0  |  0   1
+ 1   0   1  |  1   0
+ 1   1   0  |  1   0
+ 1   1   1  |  1   1
+
