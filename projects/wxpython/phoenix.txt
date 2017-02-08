@@ -1,0 +1,4 @@
+To use wxPython from the build folder (without installing):
+ - Set your PYTHONPATH variable to /Users/bentlema/Git/GitHub/wxWidgets/Phoenix.
+ - You may also need to set your (DY)LD_LIBRARY_PATH to /Users/bentlema/Git/GitHub/wxWidgets/Phoenix/build/wxbld/lib,
+   or wherever the wxWidgets libs have been installed.
