@@ -1,11 +1,13 @@
 '''
-Created on Dec 26, 2016
+Classes to implement components to build digital logic circuits
+   * inputConnection, outputConnection
+   * logicGate, andGate, orGate, notGate, xorGate, bufferGate
+   * wire
 
 @author: bentlema
 '''
 
 import math
-
 
 
 class inputConnection():
@@ -15,13 +17,11 @@ class inputConnection():
         self.label = label
 
 
-
 class outputConnection():
 
     def __init__(self,label):
         self.state = bool(False)
         self.label = label
-
 
 
 class logicGate():
@@ -52,6 +52,15 @@ class logicGate():
             elif (numberOfInputs == 2):
                 print(myBits[0], myBits[1], self.truthTable[gateName][int(myBits[0])][int(myBits[1])] )
 
+    def getOutputState(self):
+        self.updateState()
+        # There should only ever be a single outputConnection, and therefore a single key
+        for o in self.outputConnection.keys():
+            return self.outputConnection[o].state
+
+    def getOutputStateByName(self,connName):
+        self.updateState()
+        return self.outputConnection[connName].state
 
     def printState(self):
         self.updateState()
@@ -75,7 +84,6 @@ class logicGate():
     def setInputStateByName(self,connName,state):
         self.inputConnection[connName].state = state
         self.updateState()
-
 
 
 class notGate(logicGate):
@@ -107,7 +115,6 @@ class notGate(logicGate):
 
     def printTruthTable(self):
         logicGate.printTruthTable(self, 'NOT')
-
 
 
 class andGate(logicGate):
@@ -142,7 +149,6 @@ class andGate(logicGate):
         logicGate.printTruthTable(self, 'AND')
 
 
-
 class orGate(logicGate):
 
     def __init__(self):
@@ -173,7 +179,6 @@ class orGate(logicGate):
 
     def printTruthTable(self):
         logicGate.printTruthTable(self, 'OR')
-
 
 
 class xorGate(logicGate):
@@ -210,7 +215,6 @@ class xorGate(logicGate):
         logicGate.printTruthTable(self, 'XOR')
 
 
-
 class bufferGate(logicGate):
 
     def __init__(self):
@@ -237,7 +241,6 @@ class bufferGate(logicGate):
 
     def printTruthTable(self):
         logicGate.printTruthTable(self, 'Buffer')
-
 
 
 class wire(logicGate):
