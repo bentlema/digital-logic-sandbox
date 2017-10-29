@@ -1,1 +1,1 @@
-![2-Bit-Full-Adder](images/2-bit\ Full\ Adder\ Large.png)
+![2-Bit-Full-Adder](images/2-bit-full-adder-large.png)
