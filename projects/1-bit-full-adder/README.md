@@ -1,1 +1,1 @@
-![1-Bit-Full-Adder](images/Full Adder Diagram Large.png)
+![1-Bit-Full-Adder](images/full-adder-large.png)
