@@ -29,6 +29,7 @@ class AndGate:
         x = self.x  # just so the following cancas.create's are easier to read
         y = self.y
 
+        '''
         canvas.create_arc(x, y, x+54, y+50, start=-90, extent=180, width=2,
                           fill="blue", activefill="red", style=ARC, tags=name_tag)
 
@@ -40,6 +41,7 @@ class AndGate:
 
         canvas.create_line(x+30, y-4, x-4, y-4, x-4, y+54, x+30, y+54, width=2,
                            fill="black", tags=name_tag)
+        '''
 
         points = []
         points.extend((x-5, y-5))  # first point in polygon
@@ -62,25 +64,25 @@ class AndGate:
         self._drag_data = {"x": 0, "y": 0, "item": None}
 
         # add bindings for clicking, dragging and releasing over any object with the name_tag
-        self.canvas.tag_bind(self.tag, "<ButtonPress-1>", self.on_token_press)
-        self.canvas.tag_bind(self.tag, "<ButtonRelease-1>", self.on_token_release)
-        self.canvas.tag_bind(self.tag, "<B1-Motion>", self.on_token_motion)
+        self.canvas.tag_bind(self.tag, "<ButtonPress-1>", self.on_button_press)
+        self.canvas.tag_bind(self.tag, "<ButtonRelease-1>", self.on_button_release)
+        self.canvas.tag_bind(self.tag, "<B1-Motion>", self.on_button_motion)
 
-    def on_token_press(self, event):
+    def on_button_press(self, event):
         # Begining drag of an object
         # record the item and its location
         self._drag_data["item"] = self.canvas.find_closest(event.x, event.y)[0]
         self._drag_data["x"] = event.x
         self._drag_data["y"] = event.y
 
-    def on_token_release(self, event):
+    def on_button_release(self, event):
         # End drag of an object
         # reset the drag information
         self._drag_data["item"] = None
         self._drag_data["x"] = 0
         self._drag_data["y"] = 0
 
-    def on_token_motion(self, event):
+    def on_button_motion(self, event):
         # Handle dragging of an object
         # compute how much the mouse has moved
         delta_x = event.x - self._drag_data["x"]
@@ -108,9 +110,8 @@ class AndGate:
         current_width = self.canvas.itemcget(self.tag, "width")
         new_width = float(current_width) * float(sf)  # scale the width of the outline also
         new_activewidth = new_width * 1.5  # the multiplier is how much magnification do we want over the line width
-        print("width = {}, activewidth = {}, scale_facter = {}".format(new_width, new_activewidth, sf))
+        print("x,y={} width = {}, activewidth = {}, scale_facter = {}".format((x ,y), new_width, new_activewidth, sf))
         self.canvas.scale(self.tag, x, y, sf, sf)
         # the item itself will remember its width, rather than an additional instance var
         self.canvas.itemconfigure(self.tag, width=new_width, activewidth=new_activewidth)
-
 
