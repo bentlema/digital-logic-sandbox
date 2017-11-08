@@ -91,11 +91,11 @@ class GraphPaperFramedCanvas(Frame):
         print("x0 - x1 = {}".format(x1 - x0))
         print("y0 - y1 = {}".format(y1 - y0))
         # Zoom In
-        if (event.delta > 0) and ((y1 - y0)  <= 100000):
+        if (event.delta > 0) and ((y1 - y0)  <= 10000):
             self.canvas.scale("all", event.x, event.y, 1.1, 1.1)
             sf = 1.1
         # Zoom Out
-        elif (event.delta < 0) and ((x1 - x0) - 500 >= w):
+        elif (event.delta < 0) and ((x1 - x0) - 1000 >= w):
             self.canvas.scale("all", event.x, event.y, 0.9, 0.9)
             sf = 0.9
 
