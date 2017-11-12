@@ -6,8 +6,10 @@ from tkinter import *
 
 
 class AndGate:
-    """ pass in the canvas object id so we know where to draw our gate"""
+    """The AND Gate draws itself on a canvas"""
+
     def __init__(self, canvas, name_tag, initial_x, initial_y):
+        """ pass in the canvas object id so we know where to draw our gate"""
         self.x = initial_x
         self.y = initial_y
         self.canvas = canvas  # remember the canvas that I'm drawn on
@@ -60,6 +62,8 @@ class AndGate:
         self.perimeter = canvas.create_polygon(points, outline='blue', activeoutline='orange',
                                                fill='', width=2, activewidth=5, tags=name_tag)
 
+        self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
+
         # this data is used to keep track of a canvas object being dragged
         self._drag_data = {"x": 0, "y": 0, "item": None}
 
@@ -105,7 +109,8 @@ class AndGate:
         for t in self.tags:
             print("{}".format(t))
 
-    """scale relative to point (x, y) by factor sf"""
+    '''
+    This isn't used anymore
     def scale(self, x, y, sf):
         current_width = self.canvas.itemcget(self.tag, "width")
         new_width = float(current_width) * float(sf)  # scale the width of the outline also
@@ -114,4 +119,4 @@ class AndGate:
         self.canvas.scale(self.tag, x, y, sf, sf)
         # the item itself will remember its width, rather than an additional instance var
         self.canvas.itemconfigure(self.tag, width=new_width, activewidth=new_activewidth)
-
+    '''

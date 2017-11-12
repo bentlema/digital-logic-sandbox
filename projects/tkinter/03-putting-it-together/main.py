@@ -12,7 +12,7 @@ print("Screen dimensions: {}x{}".format(screen_width,screen_height))
 
 root.minsize(320, 240)
 root.maxsize(screen_width - 20, screen_height - 60)
-root.attributes("-alpha", 0.85)
+#root.attributes("-alpha", 0.85)
 
 frame_top = Frame(root, width=800, height=100)
 mouse_coords_var = StringVar()
@@ -34,9 +34,10 @@ canvas_mouse_coords_label.pack()
 gpfc = GraphPaperFramedCanvas(root)
 gpfc.pack(fill="both", expand=True)
 
-my_1st_gate = AndGate(gpfc.canvas, 'foo', 100, 50)
-my_2nd_gate = AndGate(gpfc.canvas, 'bar', 100, 150)
-my_3rd_gate = AndGate(gpfc.canvas, 'zoo', 100, 250)
+# Let's draw near the center of the 8000x8000 canvas
+my_1st_gate = AndGate(gpfc.canvas, 'foo', 4000, 4050)
+my_2nd_gate = AndGate(gpfc.canvas, 'bar', 4000, 4150)
+my_3rd_gate = AndGate(gpfc.canvas, 'zoo', 4000, 4250)
 
 root.mainloop()
 
