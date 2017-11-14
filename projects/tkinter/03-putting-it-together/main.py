@@ -6,30 +6,27 @@ from canvas import GraphPaperFramedCanvas
 
 root = Tk()
 
+# Window Transparency
+#root.attributes("-alpha", 0.85)
+#root.wm_attributes('-fullscreen', True)
+
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 print("Screen dimensions: {}x{}".format(screen_width,screen_height))
 
+starting_width = 800
+starting_height = 600
+print("Starting root window dimensions: {}x{}".format(starting_width,starting_height))
+
 root.minsize(320, 240)
-root.maxsize(screen_width - 20, screen_height - 60)
-#root.attributes("-alpha", 0.85)
+max_width = screen_width = int(screen_width * .99)
+max_height = screen_height = int(screen_height * .95)
+root.maxsize(max_width, max_height)
 
-frame_top = Frame(root, width=800, height=100)
-mouse_coords_var = StringVar()
-mouse_coords_var.set("INIT")
-mouse_coords_label = Label(frame_top, textvariable=mouse_coords_var)
-mouse_coords_label.pack()
+starting_x = int((screen_width / 2) - (starting_width / 2))
+starting_y = int((screen_height / 2) - (starting_height / 2))
 
-canvas_size_var = StringVar()
-canvas_size_var.set("INIT")
-canvas_size_label = Label(frame_top, textvariable=canvas_size_var)
-canvas_size_label.pack()
-
-canvas_mouse_coords_var = StringVar()
-canvas_mouse_coords_var.set("INIT")
-canvas_mouse_coords_label = Label(frame_top, textvariable=canvas_mouse_coords_var)
-canvas_mouse_coords_label.pack()
-
+root.geometry("{}x{}+{}+{}".format(starting_width, starting_height, starting_x, starting_y))
 
 gpfc = GraphPaperFramedCanvas(root)
 gpfc.pack(fill="both", expand=True)
