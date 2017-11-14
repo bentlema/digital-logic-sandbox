@@ -36,10 +36,6 @@ class GraphPaperFramedCanvas(Frame):
         self.canvas.create_oval(-100, -100, -100, -100, width=1, activewidth=0, tag="scale_on_zoom_1_0")
         self.canvas.create_oval(-100, -100, -100, -100, width=2, activewidth=5, tag="scale_on_zoom_2_5")
 
-        # Tag all graph_paper canvas objects with scale_on_zoom_1_0 as all lines start out with
-        # a width of 1 and we never use activewidth, so active width is 0
-        self.canvas.addtag_withtag("scale_on_zoom_1_0", "graph_paper")
-
         '''
         Draw the Graph Paper background.  We draw all of the vertical lines, followed by all of the
         horizontal lines.  Every 100 pixels (or every 10th line) we draw using a DARKER green, to
@@ -63,6 +59,10 @@ class GraphPaperFramedCanvas(Frame):
             else:
                 line_color = "#ccffcc"
             self.canvas.create_line([(0, i), (self.canvas_width, i)], fill=line_color, tag=self.tag)
+
+        # Tag all graph_paper canvas objects with scale_on_zoom_1_0 as all lines start out with
+        # a width of 1 and we never use activewidth, so active width is 0
+        self.canvas.addtag_withtag("scale_on_zoom_1_0", "graph_paper")
 
         # Ensure that all canvas objects tagged as 'graph_paper' are pushed down to the lowest layer,
         # as all subsequently-created objects will be dragable across the top of the canvas
