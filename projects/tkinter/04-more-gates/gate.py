@@ -129,4 +129,87 @@ class OrGate(Gate):
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
 
 
+class XOrGate(Gate):
+    """The XOR Gate draws itself on a canvas"""
+
+    def __init__(self, canvas, name_tag, initial_x, initial_y):
+        super().__init__(canvas, name_tag, initial_x, initial_y)
+
+        x = self.x
+        y = self.y
+
+        points = []
+        points.extend((x, y))  # first point in polygon
+
+        # scale the unit circle by 30, as that's the distance from the center of the circle to the arc
+        # See Also: https://en.wikipedia.org/wiki/Unit_circle
+        for angle in range(-90, 90):
+            arc_x = (math.cos(math.radians(angle)) * 65) + x
+            arc_y = (math.sin(math.radians(angle)) * 30) + (y + 30)
+            points.extend((arc_x, arc_y))
+
+        for angle in range(90, 270):
+            arc_x = (math.cos(math.radians(angle)) * -8) + x
+            arc_y = (math.sin(math.radians(angle)) * 30) + (y + 30)
+            points.extend((arc_x, arc_y))
+
+        self.perimeter = canvas.create_polygon(points, outline='blue', activeoutline='orange',
+                                               fill='', width=2, activewidth=5, tags=name_tag)
+
+        self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
+
+
+        points = []
+        points.extend((x - 8, y))  # first point in polygon
+
+        for angle in range(-90, 90):
+            arc_x = (math.cos(math.radians(angle)) * 8) + (x - 8)
+            arc_y = (math.sin(math.radians(angle)) * 30) + (y + 30)
+            points.extend((arc_x, arc_y))
+
+        for angle in range(90, 270):
+            arc_x = (math.cos(math.radians(angle)) * -8) + (x - 8)
+            arc_y = (math.sin(math.radians(angle)) * 30) + (y + 30)
+            points.extend((arc_x, arc_y))
+
+        self.polyarc = canvas.create_polygon(points, outline='blue', activeoutline='orange',
+                                               fill='', width=2, activewidth=5, tags=name_tag)
+
+        self.canvas.addtag_withtag("scale_on_zoom_2_5", self.polyarc)
+
+        self.canvas.tag_bind(self.tag, "<Enter>", self.on_enter)
+        self.canvas.tag_bind(self.tag, "<Leave>", self.on_leave)
+
+    '''
+    Because we have a canvas object composed of multiple items, we can no longer depend on
+    the default enter/activate leave/deactive of the item, as it would only "light up" part
+    of the object.  I couldn't find any way to forcibly "activate" another item to cause its
+    activewidth and activeoutline parameters to "go active" artificually, so came up with
+    the following on_enter and on_leave event handlers to do the work manually.
+    
+    We first (on_enter) sample an item tagged with "scale_on_zoom_2_5" and then set that new
+    width on the items of the gate object, along with the desired active color.  This happens
+    if we enter either item composing the compound object.
+    
+    When the pointer exits the item (on_leave) we reset the width and color back.
+    
+    The only problem with this method currently is that while zooming, if the pointer is within
+    one of the items, the width and activewidth change, but these callbacks are not triggered
+    since the pointer never leaves the item.  This leaves one of the items displaying a slightly
+    different width.  It's a minor visual annoyance, that I'm not going to care about for now.
+    '''
+
+    def on_enter(self, event):
+            active_outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "activewidth")
+            self.canvas.itemconfigure(self.polyarc, outline='orange', width=active_outline_width)
+            self.canvas.itemconfigure(self.perimeter, outline='orange', width=active_outline_width)
+            self.canvas.update_idletasks()
+
+    def on_leave(self, event):
+        outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "width")
+        self.canvas.itemconfigure(self.polyarc, outline='blue', width=outline_width)
+        self.canvas.itemconfigure(self.perimeter, outline='blue', width=outline_width)
+
+
+
 
