@@ -7,7 +7,7 @@ from canvas import GraphPaperFramedCanvas
 root = Tk()
 
 # Window Transparency
-#root.attributes("-alpha", 0.85)
+root.attributes("-alpha", 0.75)
 #root.wm_attributes('-fullscreen', True)
 
 screen_width = root.winfo_screenwidth()
@@ -37,6 +37,7 @@ my_2nd_gate = AndGate(gpfc.canvas, 'bar', 4000, 4150)
 my_3rd_gate = AndGate(gpfc.canvas, 'zoo', 100, 250)
 my_4th_gate = OrGate(gpfc.canvas, 'or001', 100, 100)
 my_5th_gate = XOrGate(gpfc.canvas, 'xor002', 100, 350)
+my_6th_gate = BufferGate(gpfc.canvas, 'buf003', 300, 350)
 
 root.mainloop()
 

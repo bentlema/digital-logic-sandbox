@@ -70,6 +70,26 @@ class Gate:
             print("{}".format(t))
 
 
+class BufferGate(Gate):
+    """The Buffer Gate draws itself on a canvas"""
+
+    def __init__(self, canvas, name_tag, initial_x, initial_y):
+        super().__init__(canvas, name_tag, initial_x, initial_y)
+
+        x = self.x
+        y = self.y
+
+        points = []
+        points.extend((x, y))  # first point in polygon
+        points.extend((x + 58, y + 28))
+        points.extend((x +  0, y + 56))
+
+        self.perimeter = canvas.create_polygon(points, outline='blue', activeoutline='orange',
+                                               fill='', width=2, activewidth=5, tags=name_tag)
+
+        self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
+
+
 class AndGate(Gate):
     """The AND Gate draws itself on a canvas"""
 
@@ -186,13 +206,13 @@ class XOrGate(Gate):
     of the object.  I couldn't find any way to forcibly "activate" another item to cause its
     activewidth and activeoutline parameters to "go active" artificually, so came up with
     the following on_enter and on_leave event handlers to do the work manually.
-    
+
     We first (on_enter) sample an item tagged with "scale_on_zoom_2_5" and then set that new
     width on the items of the gate object, along with the desired active color.  This happens
     if we enter either item composing the compound object.
-    
+
     When the pointer exits the item (on_leave) we reset the width and color back.
-    
+
     The only problem with this method currently is that while zooming, if the pointer is within
     one of the items, the width and activewidth change, but these callbacks are not triggered
     since the pointer never leaves the item.  This leaves one of the items displaying a slightly
