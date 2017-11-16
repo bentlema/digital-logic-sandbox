@@ -1,5 +1,45 @@
 import math
-from tkinter import *
+#from tkinter import *
+
+
+class InputConnection:
+
+    def __init__(self, parent, label):
+        self.state = bool(False)
+        self.label = label
+
+
+class OutputConnection:
+
+    def __init__(self, parent, starting_point, label):
+        self.state = bool(False)
+        self.label = label
+
+        (x0, y0) = starting_point
+        (x1, y1) = x0 + 10, y0
+
+        self.output_line = parent.canvas.create_line(x0, y0, x1, y1, width=2, activewidth=5, fill="blue", activefill="orange", tag=parent.tag)
+        parent.canvas.addtag_withtag("scale_on_zoom_2_5", self.output_line)
+        self.output_joint = parent.canvas.create_oval(x1, y1 - 6, x1 + 12, y1 + 6, width=2, activewidth=5, fill="white", outline="blue", activeoutline="orange", tag=parent.tag)
+        parent.canvas.addtag_withtag("scale_on_zoom_2_5", self.output_joint)
+
+
+class InvertedOutputConnection:
+
+    def __init__(self, parent, starting_point, label):
+        self.state = bool(True)
+        self.label = label
+
+        (x0, y0) = starting_point
+        (x1, y1) = x0 + 10, y0
+
+        self.output_inverter = parent.canvas.create_oval(x0, y0 - 4, x0 + 8, y0 + 4, width=2, activewidth=5, fill="white", outline="blue", activeoutline="orange", tag=parent.tag)
+        parent.canvas.addtag_withtag("scale_on_zoom_2_5", self.output_inverter)
+        self.output_line = parent.canvas.create_line(x0 + 8, y0, x1 + 8, y1, width=2, activewidth=5, fill="blue", activefill="orange", tag=parent.tag)
+        parent.canvas.addtag_withtag("scale_on_zoom_2_5", self.output_line)
+        self.output_joint = parent.canvas.create_oval(x1 + 8, y1 - 6, x1 + 20, y1 + 6, width=2, activewidth=5, fill="white", outline="blue", activeoutline="orange", tag=parent.tag)
+        parent.canvas.addtag_withtag("scale_on_zoom_2_5", self.output_joint)
+
 
 class Gate:
     """The parent class for all Gates"""
@@ -89,6 +129,52 @@ class BufferGate(Gate):
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
 
+        # Dictionaries to keep track of inputs and outputs
+        self.input_connection = {}
+        self.output_connection = {}
+
+        # A Buffer gate has one input connection and one output connection
+        self.input_connection['IN_0'] = InputConnection(self, 'Input 0')
+        self.output_connection['OUT_0'] = OutputConnection(self, (x + 58, y + 28), 'Output')
+
+        # Ensure initial value of output is correct
+        self.update_state()
+
+    def update_state(self):
+        self.output_connection['OUT_0'].state = self.input_connection['IN_0'].state
+
+
+class NotGate(Gate):
+    def __init__(self, canvas, name_tag, initial_x, initial_y):
+        super().__init__(canvas, name_tag, initial_x, initial_y)
+
+        x = self.x
+        y = self.y
+
+        points = []
+        points.extend((x, y))  # first point in polygon
+        points.extend((x + 58, y + 28))
+        points.extend((x +  0, y + 56))
+
+        self.perimeter = canvas.create_polygon(points, outline='blue', activeoutline='orange',
+                                               fill='', width=2, activewidth=5, tags=name_tag)
+
+        self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
+
+        # Dictionaries to keep track of inputs and outputs
+        self.input_connection = {}
+        self.output_connection = {}
+
+        # A Buffer gate has one input connection and one output connection
+        self.input_connection['IN_0'] = InputConnection(self, 'Input 0')
+        self.output_connection['OUT_0'] = InvertedOutputConnection(self, (x + 58, y + 28), 'Output')
+
+        # Ensure initial value of output is correct
+        self.update_state()
+
+    def update_state(self):
+        self.output_connection['OUT_0'].state = not self.input_connection['IN_0'].state
+
 
 class AndGate(Gate):
     """The AND Gate draws itself on a canvas"""
@@ -117,6 +203,21 @@ class AndGate(Gate):
                                                fill='', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
+
+        # Dictionaries to keep track of inputs and outputs
+        self.input_connection = {}
+        self.output_connection = {}
+
+        # An AND gate has two input connections and one output connection
+        self.input_connection['IN_0'] = InputConnection(self, 'Input 0')
+        self.input_connection['IN_1'] = InputConnection(self, 'Input 1')
+        self.output_connection['OUT_0'] = OutputConnection(self, (x + 60, y + 30), 'Output')
+
+        # Ensure initial value of output is correct
+        self.update_state()
+
+    def update_state(self):
+        self.output_connection['OUT_0'].state = self.input_connection['IN_0'].state and self.inputConnection['IN_1'].state
 
 
 class OrGate(Gate):

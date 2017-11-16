@@ -38,6 +38,7 @@ my_3rd_gate = AndGate(gpfc.canvas, 'zoo', 100, 250)
 my_4th_gate = OrGate(gpfc.canvas, 'or001', 100, 100)
 my_5th_gate = XOrGate(gpfc.canvas, 'xor002', 100, 350)
 my_6th_gate = BufferGate(gpfc.canvas, 'buf003', 300, 350)
+my_7th_gate = NotGate(gpfc.canvas, 'not004', 300, 100)
 
 root.mainloop()
 
