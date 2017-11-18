@@ -34,6 +34,7 @@ class GraphPaperFramedCanvas(Frame):
         '''
 
         self.canvas.create_oval(-100, -100, -100, -100, width=1, activewidth=0, tag="scale_on_zoom_1_0")
+        self.canvas.create_oval(-100, -100, -100, -100, width=2, activewidth=2, tag="scale_on_zoom_2_2")
         self.canvas.create_oval(-100, -100, -100, -100, width=2, activewidth=5, tag="scale_on_zoom_2_5")
 
         '''
@@ -163,7 +164,7 @@ class GraphPaperFramedCanvas(Frame):
         # For items with initial line width 1, and active width 0, they should be tagged scale_on_zoom_1_0
         # For items with initial line width 2, and active width 5, they should be tagged scale_on_zoom_2_5
 
-        for tag in ("scale_on_zoom_1_0", "scale_on_zoom_2_5"):
+        for tag in ("scale_on_zoom_1_0", "scale_on_zoom_2_2", "scale_on_zoom_2_5"):
             current_width = self.canvas.itemcget(tag, "width")
             current_activewidth = self.canvas.itemcget(tag, "activewidth")
             new_width = float(current_width) * sf
