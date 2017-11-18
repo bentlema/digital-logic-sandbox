@@ -1,5 +1,4 @@
 import math
-#from tkinter import *
 
 
 class InputConnection:
@@ -18,8 +17,9 @@ class OutputConnection:
         (x0, y0) = starting_point
         (x1, y1) = x0 + 10, y0
 
-        self.output_line = parent.canvas.create_line(x0, y0, x1, y1, width=2, activewidth=5, fill="blue", activefill="orange", tag=parent.tag)
-        parent.canvas.addtag_withtag("scale_on_zoom_2_5", self.output_line)
+        self.output_line = parent.canvas.create_line(x0, y0, x1, y1, width=2, activewidth=2, fill="blue", activefill="blue", tag=parent.tag)
+        parent.canvas.addtag_withtag("scale_on_zoom_2_2", self.output_line)
+
         self.output_joint = parent.canvas.create_oval(x1, y1 - 6, x1 + 12, y1 + 6, width=2, activewidth=5, fill="white", outline="blue", activeoutline="orange", tag=parent.tag)
         parent.canvas.addtag_withtag("scale_on_zoom_2_5", self.output_joint)
 
@@ -33,10 +33,12 @@ class InvertedOutputConnection:
         (x0, y0) = starting_point
         (x1, y1) = x0 + 10, y0
 
+        self.output_line = parent.canvas.create_line(x0 + 8, y0, x1 + 8, y1, width=2, activewidth=2, fill="blue", activefill="blue", tag=parent.tag)
+        parent.canvas.addtag_withtag("scale_on_zoom_2_2", self.output_line)
+
         self.output_inverter = parent.canvas.create_oval(x0, y0 - 4, x0 + 8, y0 + 4, width=2, activewidth=5, fill="white", outline="blue", activeoutline="orange", tag=parent.tag)
         parent.canvas.addtag_withtag("scale_on_zoom_2_5", self.output_inverter)
-        self.output_line = parent.canvas.create_line(x0 + 8, y0, x1 + 8, y1, width=2, activewidth=5, fill="blue", activefill="orange", tag=parent.tag)
-        parent.canvas.addtag_withtag("scale_on_zoom_2_5", self.output_line)
+
         self.output_joint = parent.canvas.create_oval(x1 + 8, y1 - 6, x1 + 20, y1 + 6, width=2, activewidth=5, fill="white", outline="blue", activeoutline="orange", tag=parent.tag)
         parent.canvas.addtag_withtag("scale_on_zoom_2_5", self.output_joint)
 
@@ -68,9 +70,9 @@ class Gate:
         self._drag_data = {"x": 0, "y": 0, "item": None}
 
         # add bindings for clicking, dragging and releasing over any object with the name_tag
-        self.canvas.tag_bind(self.tag, "<ButtonPress-1>", self.on_button_press)
-        self.canvas.tag_bind(self.tag, "<ButtonRelease-1>", self.on_button_release)
-        self.canvas.tag_bind(self.tag, "<B1-Motion>", self.on_button_motion)
+        self.canvas.tag_bind(self.tag + "dragable", "<ButtonPress-1>", self.on_button_press)
+        self.canvas.tag_bind(self.tag + "dragable", "<ButtonRelease-1>", self.on_button_release)
+        self.canvas.tag_bind(self.tag + "dragable", "<B1-Motion>", self.on_button_motion)
 
     def on_button_press(self, event):
         # Begining drag of an object
@@ -128,6 +130,7 @@ class BufferGate(Gate):
                                                fill='', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
+        self.canvas.addtag_withtag(self.tag + "dragable", self.perimeter)
 
         # Dictionaries to keep track of inputs and outputs
         self.input_connection = {}
@@ -172,6 +175,27 @@ class NotGate(Gate):
         # Ensure initial value of output is correct
         self.update_state()
 
+        # Tag those parts that we can click on and drag the gate
+        self.canvas.addtag_withtag(self.tag + "dragable", self.perimeter)
+        self.canvas.addtag_withtag(self.tag + "dragable", self.output_connection['OUT_0'].output_inverter)
+
+        # Tag the specific canvas items we want to activate (highlight) together
+        self.canvas.addtag_withtag(self.tag + "activate_together", self.perimeter)
+        self.canvas.addtag_withtag(self.tag + "activate_together", self.output_connection['OUT_0'].output_inverter)
+
+        self.canvas.tag_bind(self.tag + "activate_together", "<Enter>", self.on_enter)
+        self.canvas.tag_bind(self.tag + "activate_together", "<Leave>", self.on_leave)
+
+    def on_enter(self, event):
+        active_outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "activewidth")
+        self.canvas.itemconfigure(self.perimeter, outline='orange', width=active_outline_width)
+        self.canvas.itemconfigure(self.output_connection['OUT_0'].output_inverter, outline='orange', width=active_outline_width)
+
+    def on_leave(self, event):
+        outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "width")
+        self.canvas.itemconfigure(self.perimeter, outline='blue', width=outline_width)
+        self.canvas.itemconfigure(self.output_connection['OUT_0'].output_inverter, outline='blue', width=outline_width)
+
     def update_state(self):
         self.output_connection['OUT_0'].state = not self.input_connection['IN_0'].state
 
@@ -203,6 +227,7 @@ class AndGate(Gate):
                                                fill='', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
+        self.canvas.addtag_withtag(self.tag + "dragable", self.perimeter)
 
         # Dictionaries to keep track of inputs and outputs
         self.input_connection = {}
@@ -217,7 +242,7 @@ class AndGate(Gate):
         self.update_state()
 
     def update_state(self):
-        self.output_connection['OUT_0'].state = self.input_connection['IN_0'].state and self.inputConnection['IN_1'].state
+        self.output_connection['OUT_0'].state = self.input_connection['IN_0'].state and self.input_connection['IN_1'].state
 
 
 class OrGate(Gate):
@@ -248,6 +273,22 @@ class OrGate(Gate):
                                                fill='', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
+        self.canvas.addtag_withtag(self.tag + "dragable", self.perimeter)
+
+        # Dictionaries to keep track of inputs and outputs
+        self.input_connection = {}
+        self.output_connection = {}
+
+        # An OR gate has two input connections and one output connection
+        self.input_connection['IN_0'] = InputConnection(self, 'Input 0')
+        self.input_connection['IN_1'] = InputConnection(self, 'Input 1')
+        self.output_connection['OUT_0'] = OutputConnection(self, (x + 65, y + 30), 'Output')
+
+        # Ensure initial value of output is correct
+        self.update_state()
+
+    def update_state(self):
+        self.output_connection['OUT_0'].state = self.input_connection['IN_0'].state or self.input_connection['IN_1'].state
 
 
 class XOrGate(Gate):
@@ -278,6 +319,7 @@ class XOrGate(Gate):
                                                fill='', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
+        self.canvas.addtag_withtag(self.tag + "dragable", self.perimeter)
 
 
         points = []
@@ -297,15 +339,32 @@ class XOrGate(Gate):
                                                fill='', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.polyarc)
+        self.canvas.addtag_withtag(self.tag + "dragable", self.polyarc)
 
-        self.canvas.tag_bind(self.tag, "<Enter>", self.on_enter)
-        self.canvas.tag_bind(self.tag, "<Leave>", self.on_leave)
+        # Dictionaries to keep track of inputs and outputs
+        self.input_connection = {}
+        self.output_connection = {}
+
+        # An XOR gate has two input connections and one output connection
+        self.input_connection['IN_0'] = InputConnection(self, 'Input 0')
+        self.input_connection['IN_1'] = InputConnection(self, 'Input 1')
+        self.output_connection['OUT_0'] = OutputConnection(self, (x + 65, y + 30), 'Output')
+
+        # Ensure initial value of output is correct
+        self.update_state()
+
+        # Tag the specific canvas items we want to activate (highlight) together
+        self.canvas.addtag_withtag(self.tag + "activate_together", self.perimeter)
+        self.canvas.addtag_withtag(self.tag + "activate_together", self.polyarc)
+
+        self.canvas.tag_bind(self.tag + "activate_together", "<Enter>", self.on_enter)
+        self.canvas.tag_bind(self.tag + "activate_together", "<Leave>", self.on_leave)
 
     '''
     Because we have a canvas object composed of multiple items, we can no longer depend on
     the default enter/activate leave/deactive of the item, as it would only "light up" part
     of the object.  I couldn't find any way to forcibly "activate" another item to cause its
-    activewidth and activeoutline parameters to "go active" artificually, so came up with
+    activewidth and activeoutline parameters to "go active" artificially, so came up with
     the following on_enter and on_leave event handlers to do the work manually.
 
     We first (on_enter) sample an item tagged with "scale_on_zoom_2_5" and then set that new
@@ -321,16 +380,21 @@ class XOrGate(Gate):
     '''
 
     def on_enter(self, event):
-            active_outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "activewidth")
-            self.canvas.itemconfigure(self.polyarc, outline='orange', width=active_outline_width)
-            self.canvas.itemconfigure(self.perimeter, outline='orange', width=active_outline_width)
-            self.canvas.update_idletasks()
+        self.canvas.tag_raise(self.perimeter)
+        active_outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "activewidth")
+        self.canvas.itemconfigure(self.polyarc, outline='orange', width=active_outline_width)
+        self.canvas.itemconfigure(self.perimeter, outline='orange', width=active_outline_width)
+        self.canvas.update_idletasks()
 
     def on_leave(self, event):
         outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "width")
         self.canvas.itemconfigure(self.polyarc, outline='blue', width=outline_width)
         self.canvas.itemconfigure(self.perimeter, outline='blue', width=outline_width)
 
+    def update_state(self):
+        # Python does not implement a logical XOR operator, but because we are storing
+        # state using the Boolean type, we can use the Bitwise XOR operator here
+        self.output_connection['OUT_0'].state = self.input_connection['IN_0'].state ^ self.input_connection['IN_1'].state
 
 
 
