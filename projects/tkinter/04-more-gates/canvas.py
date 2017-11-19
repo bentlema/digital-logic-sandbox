@@ -93,8 +93,8 @@ class GraphPaperFramedCanvas(Frame):
         self.grid_columnconfigure(0, weight=1)
 
         # Bindings for click and drag panning/scrolling the canvas
-        self.canvas.tag_bind(self.tag, "<ButtonPress-1>", self.scroll_start)
-        self.canvas.tag_bind(self.tag, "<B1-Motion>", self.scroll_move)
+        self.canvas.tag_bind(self.tag, "<Control-ButtonPress-1>", self.scroll_start)
+        self.canvas.tag_bind(self.tag, "<Control-B1-Motion>", self.scroll_move)
 
         # Bindings for panning/scrolling the canvas.  May use 2-finger swipe gesture on the trackpad
         self.canvas.bind("<MouseWheel>", self.on_mousewheel)
