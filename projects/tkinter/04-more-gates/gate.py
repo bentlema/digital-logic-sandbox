@@ -3,9 +3,17 @@ import math
 
 class InputConnection:
 
-    def __init__(self, parent, label):
+    def __init__(self, parent, starting_point, label):
         self.state = bool(False)
         self.label = label
+
+        (x, y) = starting_point
+
+        self.input_line = parent.canvas.create_line(x, y, x - 15, y, width=2, activewidth=2, fill="blue", activefill="blue", tag=parent.tag)
+        parent.canvas.addtag_withtag("scale_on_zoom_2_2", self.input_line)
+
+        self.output_joint = parent.canvas.create_oval(x - 15, y - 6, x - 27, y + 6, width=2, activewidth=5, fill="white", outline="blue", activeoutline="orange", tag=parent.tag)
+        parent.canvas.addtag_withtag("scale_on_zoom_2_5", self.output_joint)
 
 
 class OutputConnection:
@@ -48,12 +56,17 @@ class Gate:
 
     def __init__(self, canvas, name_tag, initial_x, initial_y):
         """ pass in the canvas object id so we know where to draw our gate"""
+
+        # Remember where I'm drawn on the canvas
         self.x = initial_x
         self.y = initial_y
-        self.canvas = canvas  # remember the canvas that I'm drawn on
+
+        # Remember the canvas that I'm drawn on
+        self.canvas = canvas
 
         # my primary name tag
         self.tag = name_tag
+
         # List of strings, each string is a name tag which is used to identify
         # groups of canvas items. One or more tags can be used to identify groups
         # of items that make up a larger compound item.  A primary tag name will
@@ -121,27 +134,42 @@ class BufferGate(Gate):
         x = self.x
         y = self.y
 
+        # Dictionaries to keep track of inputs and outputs
+        self.input_connection = {}
+        self.output_connection = {}
+
+        # A Buffer gate has one input connection and one output connection
+        self.input_connection['IN_0'] = InputConnection(self, (x, y + 28), 'Input 0')
+        self.output_connection['OUT_0'] = OutputConnection(self, (x + 58, y + 28), 'Output')
+
         points = []
         points.extend((x, y))  # first point in polygon
         points.extend((x + 58, y + 28))
         points.extend((x +  0, y + 56))
 
         self.perimeter = canvas.create_polygon(points, outline='blue', activeoutline='orange',
-                                               fill='', width=2, activewidth=5, tags=name_tag)
+                                               fill='white', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
         self.canvas.addtag_withtag(self.tag + "dragable", self.perimeter)
 
-        # Dictionaries to keep track of inputs and outputs
-        self.input_connection = {}
-        self.output_connection = {}
-
-        # A Buffer gate has one input connection and one output connection
-        self.input_connection['IN_0'] = InputConnection(self, 'Input 0')
-        self.output_connection['OUT_0'] = OutputConnection(self, (x + 58, y + 28), 'Output')
-
         # Ensure initial value of output is correct
         self.update_state()
+
+        # Tag the specific canvas items we want to activate (highlight) together
+        self.canvas.addtag_withtag(self.tag + "activate_together", self.perimeter)
+
+        self.canvas.tag_bind(self.tag + "activate_together", "<Enter>", self.on_enter)
+        self.canvas.tag_bind(self.tag + "activate_together", "<Leave>", self.on_leave)
+
+    def on_enter(self, event):
+        self.canvas.tag_raise(self.tag)
+        active_outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "activewidth")
+        self.canvas.itemconfigure(self.perimeter, outline='orange', width=active_outline_width)
+
+    def on_leave(self, event):
+        outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "width")
+        self.canvas.itemconfigure(self.perimeter, outline='blue', width=outline_width)
 
     def update_state(self):
         self.output_connection['OUT_0'].state = self.input_connection['IN_0'].state
@@ -154,23 +182,23 @@ class NotGate(Gate):
         x = self.x
         y = self.y
 
+        # Dictionaries to keep track of inputs and outputs
+        self.input_connection = {}
+        self.output_connection = {}
+
+        # A Buffer gate has one input connection and one output connection
+        self.input_connection['IN_0'] = InputConnection(self, (x, y + 28), 'Input 0')
+        self.output_connection['OUT_0'] = InvertedOutputConnection(self, (x + 58, y + 28), 'Output')
+
         points = []
         points.extend((x, y))  # first point in polygon
         points.extend((x + 58, y + 28))
         points.extend((x +  0, y + 56))
 
         self.perimeter = canvas.create_polygon(points, outline='blue', activeoutline='orange',
-                                               fill='', width=2, activewidth=5, tags=name_tag)
+                                               fill='white', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
-
-        # Dictionaries to keep track of inputs and outputs
-        self.input_connection = {}
-        self.output_connection = {}
-
-        # A Buffer gate has one input connection and one output connection
-        self.input_connection['IN_0'] = InputConnection(self, 'Input 0')
-        self.output_connection['OUT_0'] = InvertedOutputConnection(self, (x + 58, y + 28), 'Output')
 
         # Ensure initial value of output is correct
         self.update_state()
@@ -187,6 +215,7 @@ class NotGate(Gate):
         self.canvas.tag_bind(self.tag + "activate_together", "<Leave>", self.on_leave)
 
     def on_enter(self, event):
+        self.canvas.tag_raise(self.tag)
         active_outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "activewidth")
         self.canvas.itemconfigure(self.perimeter, outline='orange', width=active_outline_width)
         self.canvas.itemconfigure(self.output_connection['OUT_0'].output_inverter, outline='orange', width=active_outline_width)
@@ -209,6 +238,15 @@ class AndGate(Gate):
         x = self.x
         y = self.y
 
+        # Dictionaries to keep track of inputs and outputs
+        self.input_connection = {}
+        self.output_connection = {}
+
+        # An AND gate has two input connections and one output connection
+        self.input_connection['IN_0'] = InputConnection(self, (x, y + 17), 'Input 0')
+        self.input_connection['IN_1'] = InputConnection(self, (x, y + 43), 'Input 1')
+        self.output_connection['OUT_0'] = OutputConnection(self, (x + 59, y + 30), 'Output')
+
         points = []
         points.extend((x, y))  # first point in polygon
         points.extend((x + 29, y))
@@ -224,22 +262,28 @@ class AndGate(Gate):
         points.extend((x, y + 60))  # last point in polygon, which connects back to the 1st point
 
         self.perimeter = canvas.create_polygon(points, outline='blue', activeoutline='orange',
-                                               fill='', width=2, activewidth=5, tags=name_tag)
+                                               fill='white', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
         self.canvas.addtag_withtag(self.tag + "dragable", self.perimeter)
 
-        # Dictionaries to keep track of inputs and outputs
-        self.input_connection = {}
-        self.output_connection = {}
-
-        # An AND gate has two input connections and one output connection
-        self.input_connection['IN_0'] = InputConnection(self, 'Input 0')
-        self.input_connection['IN_1'] = InputConnection(self, 'Input 1')
-        self.output_connection['OUT_0'] = OutputConnection(self, (x + 60, y + 30), 'Output')
-
         # Ensure initial value of output is correct
         self.update_state()
+
+        # Tag the specific canvas items we want to activate (highlight) together
+        self.canvas.addtag_withtag(self.tag + "activate_together", self.perimeter)
+
+        self.canvas.tag_bind(self.tag + "activate_together", "<Enter>", self.on_enter)
+        self.canvas.tag_bind(self.tag + "activate_together", "<Leave>", self.on_leave)
+
+    def on_enter(self, event):
+        self.canvas.tag_raise(self.tag)
+        active_outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "activewidth")
+        self.canvas.itemconfigure(self.perimeter, outline='orange', width=active_outline_width)
+
+    def on_leave(self, event):
+        outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "width")
+        self.canvas.itemconfigure(self.perimeter, outline='blue', width=outline_width)
 
     def update_state(self):
         self.output_connection['OUT_0'].state = self.input_connection['IN_0'].state and self.input_connection['IN_1'].state
@@ -254,6 +298,15 @@ class OrGate(Gate):
         x = self.x
         y = self.y
 
+        # Dictionaries to keep track of inputs and outputs
+        self.input_connection = {}
+        self.output_connection = {}
+
+        # An OR gate has two input connections and one output connection
+        self.input_connection['IN_0'] = InputConnection(self, (x + 7, y + 17), 'Input 0')
+        self.input_connection['IN_1'] = InputConnection(self, (x + 7, y + 43), 'Input 1')
+        self.output_connection['OUT_0'] = OutputConnection(self, (x + 65, y + 30), 'Output')
+
         points = []
         points.extend((x, y))  # first point in polygon
 
@@ -270,22 +323,28 @@ class OrGate(Gate):
             points.extend((arc_x, arc_y))
 
         self.perimeter = canvas.create_polygon(points, outline='blue', activeoutline='orange',
-                                               fill='', width=2, activewidth=5, tags=name_tag)
+                                               fill='white', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
         self.canvas.addtag_withtag(self.tag + "dragable", self.perimeter)
 
-        # Dictionaries to keep track of inputs and outputs
-        self.input_connection = {}
-        self.output_connection = {}
-
-        # An OR gate has two input connections and one output connection
-        self.input_connection['IN_0'] = InputConnection(self, 'Input 0')
-        self.input_connection['IN_1'] = InputConnection(self, 'Input 1')
-        self.output_connection['OUT_0'] = OutputConnection(self, (x + 65, y + 30), 'Output')
-
         # Ensure initial value of output is correct
         self.update_state()
+
+        # Tag the specific canvas items we want to activate (highlight) together
+        self.canvas.addtag_withtag(self.tag + "activate_together", self.perimeter)
+
+        self.canvas.tag_bind(self.tag + "activate_together", "<Enter>", self.on_enter)
+        self.canvas.tag_bind(self.tag + "activate_together", "<Leave>", self.on_leave)
+
+    def on_enter(self, event):
+        self.canvas.tag_raise(self.tag)
+        active_outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "activewidth")
+        self.canvas.itemconfigure(self.perimeter, outline='orange', width=active_outline_width)
+
+    def on_leave(self, event):
+        outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "width")
+        self.canvas.itemconfigure(self.perimeter, outline='blue', width=outline_width)
 
     def update_state(self):
         self.output_connection['OUT_0'].state = self.input_connection['IN_0'].state or self.input_connection['IN_1'].state
@@ -300,6 +359,15 @@ class XOrGate(Gate):
         x = self.x
         y = self.y
 
+        # Dictionaries to keep track of inputs and outputs
+        self.input_connection = {}
+        self.output_connection = {}
+
+        # An XOR gate has two input connections and one output connection
+        self.input_connection['IN_0'] = InputConnection(self, (x, y + 17), 'Input 0')
+        self.input_connection['IN_1'] = InputConnection(self, (x, y + 43), 'Input 1')
+        self.output_connection['OUT_0'] = OutputConnection(self, (x + 65, y + 30), 'Output')
+
         points = []
         points.extend((x, y))  # first point in polygon
 
@@ -316,7 +384,7 @@ class XOrGate(Gate):
             points.extend((arc_x, arc_y))
 
         self.perimeter = canvas.create_polygon(points, outline='blue', activeoutline='orange',
-                                               fill='', width=2, activewidth=5, tags=name_tag)
+                                               fill='white', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
         self.canvas.addtag_withtag(self.tag + "dragable", self.perimeter)
@@ -336,19 +404,10 @@ class XOrGate(Gate):
             points.extend((arc_x, arc_y))
 
         self.polyarc = canvas.create_polygon(points, outline='blue', activeoutline='orange',
-                                               fill='', width=2, activewidth=5, tags=name_tag)
+                                               fill='white', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.polyarc)
         self.canvas.addtag_withtag(self.tag + "dragable", self.polyarc)
-
-        # Dictionaries to keep track of inputs and outputs
-        self.input_connection = {}
-        self.output_connection = {}
-
-        # An XOR gate has two input connections and one output connection
-        self.input_connection['IN_0'] = InputConnection(self, 'Input 0')
-        self.input_connection['IN_1'] = InputConnection(self, 'Input 1')
-        self.output_connection['OUT_0'] = OutputConnection(self, (x + 65, y + 30), 'Output')
 
         # Ensure initial value of output is correct
         self.update_state()
@@ -380,7 +439,7 @@ class XOrGate(Gate):
     '''
 
     def on_enter(self, event):
-        self.canvas.tag_raise(self.perimeter)
+        self.canvas.tag_raise(self.tag)
         active_outline_width = self.canvas.itemcget("scale_on_zoom_2_5", "activewidth")
         self.canvas.itemconfigure(self.polyarc, outline='orange', width=active_outline_width)
         self.canvas.itemconfigure(self.perimeter, outline='orange', width=active_outline_width)
