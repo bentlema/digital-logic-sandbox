@@ -67,18 +67,6 @@ class Gate:
         # my primary name tag
         self.tag = name_tag
 
-        # List of strings, each string is a name tag which is used to identify
-        # groups of canvas items. One or more tags can be used to identify groups
-        # of items that make up a larger compound item.  A primary tag name will
-        # be passed in upon create, but multiple name tags can be added later via
-        # add_tag method.  Eventually I will generate a random name tag using the
-        # current time plus a random hash, so we can create many objects with
-        # unique tag names, and dont have to worry about what the tag name is
-        # outside of the object, or could make the arg optional so it works
-        # either way
-        self.tags = []
-        self.tags.append(name_tag)
-
         # this data is used to keep track of a canvas object being dragged
         self._drag_data = {"x": 0, "y": 0, "item": None}
 
@@ -113,16 +101,6 @@ class Gate:
         # record the new position
         self._drag_data["x"] = event.x
         self._drag_data["y"] = event.y
-
-    def add_tag(self, tag):
-        self.tags.append(tag)
-
-    def current_tags(self):
-        return self.tags
-
-    def print_tags(self):
-        for t in self.tags:
-            print("{}".format(t))
 
 
 class BufferGate(Gate):
@@ -389,7 +367,6 @@ class XOrGate(Gate):
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.perimeter)
         self.canvas.addtag_withtag(self.tag + "dragable", self.perimeter)
 
-
         points = []
         points.extend((x - 8, y))  # first point in polygon
 
@@ -404,7 +381,7 @@ class XOrGate(Gate):
             points.extend((arc_x, arc_y))
 
         self.polyarc = canvas.create_polygon(points, outline='blue', activeoutline='orange',
-                                               fill='white', width=2, activewidth=5, tags=name_tag)
+                                             fill='white', width=2, activewidth=5, tags=name_tag)
 
         self.canvas.addtag_withtag("scale_on_zoom_2_5", self.polyarc)
         self.canvas.addtag_withtag(self.tag + "dragable", self.polyarc)
