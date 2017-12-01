@@ -209,8 +209,8 @@ class BufferGate(Gate):
         self.output_connection = {}
 
         # A Buffer gate has one input connection and one output connection
-        self.input_connection['IN_0'] = InputConnection(self, (x, y + 28), 'Input 0')
-        self.output_connection['OUT_0'] = OutputConnection(self, (x + 58, y + 28), 'Output')
+        self.input_connection['IN_0'] = InputConnection(self, (x, y + 27), 'Input 0')
+        self.output_connection['OUT_0'] = OutputConnection(self, (x + 58, y + 27), 'Output')
 
         points = []
         points.extend((x, y))  # first point in polygon
@@ -262,8 +262,8 @@ class NotGate(Gate):
         self.output_connection = {}
 
         # A Buffer gate has one input connection and one output connection
-        self.input_connection['IN_0'] = InputConnection(self, (x, y + 28), 'Input 0')
-        self.output_connection['OUT_0'] = InvertedOutputConnection(self, (x + 58, y + 28), 'Output')
+        self.input_connection['IN_0'] = InputConnection(self, (x, y + 27), 'Input 0')
+        self.output_connection['OUT_0'] = InvertedOutputConnection(self, (x + 58, y + 27), 'Output')
 
         points = []
         points.extend((x, y))  # first point in polygon
