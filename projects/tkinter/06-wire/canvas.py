@@ -7,11 +7,19 @@ import random
 class GraphPaperFramedCanvas(Frame):
     """draw a grid pattern that looks like "Engineer's Graph Paper" on a canvas"""
 
-    def __init__(self, root):
+    def __init__(self, root, width, height):
         Frame.__init__(self, root)
 
-        self.canvas_width = 8000
-        self.canvas_height = 8000
+        if width:
+            self.canvas_width = width
+        else:
+            self.canvas_width = 8000
+
+        if height:
+            self.canvas_height = height
+        else:
+            self.canvas_height = 8000
+
         self.canvas = Canvas(self, width=self.canvas_width, height=self.canvas_height,
                              borderwidth=0, highlightthickness=0)
 
@@ -148,6 +156,11 @@ class GraphPaperFramedCanvas(Frame):
             self.canvas.yview_scroll(-1 * event.delta, "units")
 
     def on_zoom(self, event):
+        # Currently we scale the canvas to simulate a zoom in/out
+        # We scale about the current location of the pointer, which may not be the most intuitive
+        # Let's try scaling about the center of the viewable canvas area instead (will try later)
+        # For now, just make sure your mouse pointer is in the center of the window when zooming,
+        # to get the traditional type of zooming you'd expect in most apps
         #print("\n\nmouse pointer {},{}".format(event.x, event.y))
         sf = 1.0
         w = self.canvas.winfo_width()
