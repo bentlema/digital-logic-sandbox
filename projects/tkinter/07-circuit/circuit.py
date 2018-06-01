@@ -42,7 +42,7 @@ class Circuit:
 
     def update_connections(self):
         for cc in self.circuit_components:
-            print("update_connections() - Circuit Component: {} = {}".format(cc, self.circuit_components[cc]))
+            #print("update_connections() - Circuit Component: {} = {}".format(cc, self.circuit_components[cc]))
             self.circuit_components[cc].update_connections()
 
     def draw_all(self):
